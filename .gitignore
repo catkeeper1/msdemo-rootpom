@@ -1,0 +1,10 @@
+*.
+!.gitignore
+.idea
+
+buildtool/target
+parentstarter/target
+target
+
+*.iml
+
