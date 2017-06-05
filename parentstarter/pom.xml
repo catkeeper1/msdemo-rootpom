@@ -4,16 +4,12 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
 
-    <parent>
-        <artifactId>root-pom</artifactId>
-        <groupId>org.ckr.msdemo</groupId>
-        <version>1.0-SNAPSHOT</version>
-    </parent>
 
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>parent-starter</artifactId>
-
+    <groupId>org.ckr.msdemo</groupId>
+    <version>1.0-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <properties>
@@ -194,30 +190,30 @@
             </plugin>
 
 
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-report-plugin</artifactId>
-                <version>2.19.1</version>
-                <configuration>
-                    <showSuccess>true</showSuccess>
-                </configuration>
-            </plugin>
+            <!--<plugin>-->
+                <!--<groupId>org.apache.maven.plugins</groupId>-->
+                <!--<artifactId>maven-surefire-report-plugin</artifactId>-->
+                <!--<version>2.19.1</version>-->
+                <!--<configuration>-->
+                    <!--<showSuccess>true</showSuccess>-->
+                <!--</configuration>-->
+            <!--</plugin>-->
 
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-checkstyle-plugin</artifactId>
-                <reportSets>
-                    <reportSet>
-                        <reports>
-                            <report>checkstyle</report>
-                        </reports>
-                    </reportSet>
-                </reportSets>
-                <configuration>
-                    <skip>${msdemo.skipReportGen}</skip>
-                    <configLocation>org/ckr/msdemo/checkstyle/checkstyle.xml</configLocation>
-                </configuration>
-            </plugin>
+            <!--<plugin>-->
+                <!--<groupId>org.apache.maven.plugins</groupId>-->
+                <!--<artifactId>maven-checkstyle-plugin</artifactId>-->
+                <!--<reportSets>-->
+                    <!--<reportSet>-->
+                        <!--<reports>-->
+                            <!--<report>checkstyle</report>-->
+                        <!--</reports>-->
+                    <!--</reportSet>-->
+                <!--</reportSets>-->
+                <!--<configuration>-->
+                    <!--<skip>${msdemo.skipReportGen}</skip>-->
+                    <!--<configLocation>org/ckr/msdemo/checkstyle/checkstyle.xml</configLocation>-->
+                <!--</configuration>-->
+            <!--</plugin>-->
 
 
             <plugin>
@@ -225,26 +221,32 @@
                 <artifactId>maven-javadoc-plugin</artifactId>
                 <version>2.10.4</version>
                 <configuration>
-
+                    <doclet>org.ckr.msdemo.doclet.DataDictDoclet</doclet>
+                    <docletPath>"D:/IdeaProjects/msdemo/msdemo-rootpom/buildtool/target/classes"</docletPath>
+                    <useStandardDocletOptions>false</useStandardDocletOptions>
                     <skip>${msdemo.skipReportGen}</skip>
                     <show>protected</show>
                     <docencoding>UTF-8</docencoding>
                     <encoding>UTF-8</encoding>
                     <charset>UTF-8</charset>
+                    <additionalJOptions>
+                        <additionalJOption>-J-Doutput=${project.reporting.outputDirectory}</additionalJOption>
+
+                    </additionalJOptions>
                 </configuration>
 
             </plugin>
 
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>findbugs-maven-plugin</artifactId>
+            <!--<plugin>-->
+                <!--<groupId>org.codehaus.mojo</groupId>-->
+                <!--<artifactId>findbugs-maven-plugin</artifactId>-->
 
-                <configuration>
-                    <skip>${msdemo.skipReportGen}</skip>
-                    <effort>Max</effort>
-                    <classFilesDirectory>${project.basedir}/target/allClasses</classFilesDirectory>
-                </configuration>
-            </plugin>
+                <!--<configuration>-->
+                    <!--<skip>${msdemo.skipReportGen}</skip>-->
+                    <!--<effort>Max</effort>-->
+                    <!--<classFilesDirectory>${project.basedir}/target/allClasses</classFilesDirectory>-->
+                <!--</configuration>-->
+            <!--</plugin>-->
         </plugins>
     </reporting>
 </project>
