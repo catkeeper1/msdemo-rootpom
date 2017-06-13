@@ -1,8 +1,12 @@
 package org.ckr.msdemo.doclet;
 
+import static org.ckr.msdemo.doclet.DocletUtil.findAnnotation;
+import static org.ckr.msdemo.doclet.DocletUtil.logMsg;
+
 import com.sun.javadoc.AnnotationDesc;
 import com.sun.javadoc.AnnotationTypeDoc;
 import com.sun.javadoc.AnnotationTypeElementDoc;
+import com.sun.javadoc.AnnotationValue;
 import com.sun.javadoc.ClassDoc;
 
 /**
@@ -10,7 +14,6 @@ import com.sun.javadoc.ClassDoc;
  */
 public class Entity {
 
-    private ClassDoc classDoc;
 
     private String tableName = null;
 
@@ -18,100 +21,59 @@ public class Entity {
         return tableName;
     }
 
-    private Entity(ClassDoc classDoc) {
-        this.classDoc = classDoc;
-
-        init();
-    }
-
-    private void init() {
-
-        AnnotationDesc[] anntations = classDoc.annotations();
-
-        for (AnnotationDesc anntation : anntations) {
-            initTableName(anntation);
-        }
+    private Entity() {
 
     }
+
+
 
     public static Entity createEntity(ClassDoc classDoc) {
 
-        System.out.println("classDoc " + classDoc);
+        logMsg("try to create entity object for classDoc: " + classDoc);
 
-        AnnotationDesc[] anntations = classDoc.annotations();
+        AnnotationDesc entityAnnotation = getEntityAnnotation(classDoc);
+        AnnotationDesc tableAnnotation = getTableAnnotation(classDoc);
 
-        if(null == anntations) {
+        if(entityAnnotation == null || tableAnnotation == null) {
+            logMsg("there is no entity or table annotation.");
             return null;
         }
 
-        for (AnnotationDesc annotation : anntations) {
+        logMsg("try to create entity object instance.");
+        Entity instance = new Entity();
 
-            //            System.out.println("annotation " + annotation);
-//            System.out.println("annotation name " + annotation.annotationType().qualifiedName());
-//
-//            System.out.println("isEneity " + isEntity(annotation.annotationType()));
-//
-//
-//            AnnotationTypeElementDoc[] elements = annotation.annotationType().elements();
-//
-//            for(int j = 0 ; j < elements.length ; j++) {
-//                System.out.println("element " + elements[j]);
-//            }
+        AnnotationValue tableNameValue =
+                DocletUtil.getAnnotationAttribute(tableAnnotation, "javax.persistence.Table.name");
 
-            if (isEntity(annotation.annotationType())) {
-
-                Entity instance = new Entity(classDoc);
-
-                return instance;
-            }
-
+        if(tableNameValue == null) {
+            logMsg("table name is null");
+        } else {
+            logMsg("table name is " + tableNameValue.value());
+            instance.tableName = (String) tableNameValue.value();
         }
 
-        return null;
-    }
 
 
-
-    private static boolean isEntity(AnnotationTypeDoc annotationTypeDoc) {
-
-        return "javax.persistence.Entity".equals(annotationTypeDoc.qualifiedName());
+        return instance;
 
     }
 
-    private static boolean isTable(AnnotationTypeDoc annotationTypeDoc) {
+    private static void initColumns(ClassDoc classDoc, Entity instance) {
+        //DocletUtil.findAnnotations(classDoc, )
 
-        return "javax.persistence.Table".equals(annotationTypeDoc.qualifiedName());
 
     }
 
-    private static boolean isTableName(AnnotationTypeElementDoc annotationTypeDoc) {
-        return "javax.persistence.Table.name".equals(annotationTypeDoc.qualifiedName());
+
+    private static AnnotationDesc getEntityAnnotation(ClassDoc classDoc) {
+
+        return findAnnotation(classDoc, "javax.persistence.Entity");
+
     }
 
-    private void initTableName(AnnotationDesc anntation) {
+    private static AnnotationDesc getTableAnnotation(ClassDoc classDoc) {
 
-        if(tableName != null) {
-            return;
-        }
-
-        if(isTable(anntation.annotationType())) {
-
-            for(AnnotationDesc.ElementValuePair pair : anntation.elementValues()) {
-
-//                System.out.println("pair " + pair);
-//                System.out.println("isTableName " + isTableName(pair.element()));
-//                System.out.println("value " + pair.value().value());
-                if(isTableName(pair.element())) {
-                    this.tableName = (String) pair.value().value();
-                    System.out.println("this.tableName " + this.tableName);
-                    break;
-                }
-
-            }
-
-
-        }
-
+        return findAnnotation(classDoc, "javax.persistence.Table");
 
     }
 
