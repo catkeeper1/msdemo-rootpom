@@ -16,7 +16,7 @@ public class AnnotationScanTemplate<T> {
 
     private T dataObject;
 
-    private List<AnnotationHandler<T>> annotationHandlerList = new ArrayList();
+    private List<BasicAnnotationHandler<T>> annotationHandlerList = new ArrayList();
 
 
 
@@ -25,7 +25,7 @@ public class AnnotationScanTemplate<T> {
         this.dataObject = dataObject;
     }
 
-    public AnnotationScanTemplate<T> addAnnotationHandler(AnnotationHandler<T> handler) {
+    private AnnotationScanTemplate<T> addAnnotationHandler(BasicAnnotationHandler<T> handler) {
         annotationHandlerList.add(handler);
         return this;
     }
@@ -59,7 +59,7 @@ public class AnnotationScanTemplate<T> {
     }
 
     private void callAnnotationHandlers(AnnotationDesc annotation) {
-        for (AnnotationHandler<T> handler : this.annotationHandlerList) {
+        for (BasicAnnotationHandler<T> handler : this.annotationHandlerList) {
             if (!handler.supported(annotation)) {
                 continue;
             }
@@ -70,9 +70,7 @@ public class AnnotationScanTemplate<T> {
 
 
     public interface AnnotationHandler<T> {
-        public boolean supported(AnnotationDesc annotation);
-        void handle(T dataObject, AnnotationDesc annotation);
-        void setParent(AnnotationScanTemplate parent);
+
         AnnotationScanTemplate parent();
 
         AnnotationHandler<T> attribute(String attributeName, SetDataFunction<T> setDataFunction) ;
@@ -82,7 +80,7 @@ public class AnnotationScanTemplate<T> {
 
         private String annotationQualifiedName;
 
-        private List<AnnotationAttributeHandler<T>> annotationAttributeHandlerList = new ArrayList();
+        private List<BasicAnnotationAttributaHandler<T>> annotationAttributeHandlerList = new ArrayList();
 
         private AnnotationScanTemplate parent;
 
@@ -90,19 +88,19 @@ public class AnnotationScanTemplate<T> {
             this.annotationQualifiedName = annotationQualifiedName;
         }
 
-        public BasicAnnotationHandler<T> addAnnotationAttributeHandler(AnnotationAttributeHandler<T> handler) {
+        public BasicAnnotationHandler<T> addAnnotationAttributeHandler(BasicAnnotationAttributaHandler<T> handler) {
 
             handler.setParent(this);
             annotationAttributeHandlerList.add(handler);
             return this;
         }
 
-        @Override
+
         public boolean supported(AnnotationDesc annotation) {
             return this.annotationQualifiedName.equals(annotation.annotationType().qualifiedName());
         }
 
-        @Override
+
         public void handle(T dataObject, AnnotationDesc annotation) {
 
             preHandle(dataObject, annotation);
@@ -119,7 +117,7 @@ public class AnnotationScanTemplate<T> {
 
         }
 
-        @Override
+
         public void setParent(AnnotationScanTemplate parent) {
             this.parent = parent;
         }
@@ -132,7 +130,7 @@ public class AnnotationScanTemplate<T> {
         @Override
         public AnnotationHandler<T> attribute(String attributeName, SetDataFunction<T> setDataFunction) {
 
-            AnnotationAttributeHandler<T> handler = new BasicAnnotationAttributaHandler<T>(attributeName,
+            BasicAnnotationAttributaHandler<T> handler = new BasicAnnotationAttributaHandler<T>(attributeName,
                                                                                            setDataFunction);
             addAnnotationAttributeHandler(handler);
             return this;
@@ -146,7 +144,7 @@ public class AnnotationScanTemplate<T> {
         private void callAnnotationAttributeHandlers(T dataObject,
                                                      AnnotationDesc annotation,
                                                      AnnotationDesc.ElementValuePair valuePair) {
-            for (AnnotationAttributeHandler<T> handler : this.annotationAttributeHandlerList) {
+            for (BasicAnnotationAttributaHandler<T> handler : this.annotationAttributeHandlerList) {
 
                 if (!handler.supported(annotation, valuePair)) {
                     continue;
@@ -158,21 +156,9 @@ public class AnnotationScanTemplate<T> {
         }
     }
 
-    public interface AnnotationAttributeHandler<T> {
 
-        boolean supported(AnnotationDesc annotation, AnnotationDesc.ElementValuePair valuePair);
 
-        void handle(T dataObject,
-                           AnnotationDesc annotation,
-                           AnnotationDesc.ElementValuePair valuePair);
-
-        void setParent(AnnotationHandler<T> parent);
-
-        AnnotationHandler<T> parent();
-
-    }
-
-    public static class BasicAnnotationAttributaHandler<T> implements AnnotationAttributeHandler<T> {
+    public static class BasicAnnotationAttributaHandler<T> {
 
         private String attributeName;
 
@@ -186,22 +172,22 @@ public class AnnotationScanTemplate<T> {
             this.setDataFunction = setDataFunction;
         }
 
-        @Override
+
         public boolean supported(AnnotationDesc annotation, AnnotationDesc.ElementValuePair valuePair) {
             return this.attributeName.equals(valuePair.element().name());
         }
 
-        @Override
+
         public void handle(T dataObject, AnnotationDesc annotation, AnnotationDesc.ElementValuePair valuePair) {
             setDataFunction.setData(dataObject, valuePair.value());
         }
 
-        @Override
+
         public void setParent(AnnotationHandler<T> parent) {
             this.parent = parent;
         }
 
-        @Override
+
         public AnnotationHandler<T> parent() {
             return this.parent;
         }
