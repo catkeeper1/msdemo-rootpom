@@ -212,3 +212,5 @@ public class AnnotationScanTemplate<T> {
         void setData(T dataObject, AnnotationValue annotationValue);
     }
 }
+
+
