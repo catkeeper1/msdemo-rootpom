@@ -58,6 +58,23 @@ public class DocletUtil {
         return null;
     }
 
+    public static String getAnnotationAttributeStringValue(AnnotationDesc annotation, String qualifiedName) {
+
+        if(annotation.elementValues() == null) {
+            return null;
+        }
+
+        for(AnnotationDesc.ElementValuePair pair : annotation.elementValues()) {
+
+            if(qualifiedName.equals(pair.element().qualifiedName())) {
+                return (String) pair.value().value();
+            }
+
+        }
+
+        return null;
+    }
+
     public static List<MethodDoc> findMethodWithAnnotation(ClassDoc classDoc, String qualifiedName) {
 
         List<MethodDoc> result = new ArrayList<MethodDoc>();
@@ -69,7 +86,7 @@ public class DocletUtil {
 
         for(MethodDoc methodDoc : classDoc.methods()) {
             AnnotationDesc columnAnnotation =
-                    findAnnotation(methodDoc, "javax.persistence.Column");
+                    findAnnotation(methodDoc, qualifiedName);
 
             if(columnAnnotation == null) {
                 continue;

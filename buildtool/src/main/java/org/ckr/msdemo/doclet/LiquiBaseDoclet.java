@@ -37,7 +37,7 @@ public class LiquiBaseDoclet {
 //            }
 //        }
 
-        new DataModel(root.classes());
+        DataModel dataModel = new DataModel(root.classes());
 
         return true;
     }
