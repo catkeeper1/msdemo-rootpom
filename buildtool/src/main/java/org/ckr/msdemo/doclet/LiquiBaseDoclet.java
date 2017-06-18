@@ -1,8 +1,7 @@
 package org.ckr.msdemo.doclet;
 
-import com.sun.javadoc.AnnotationDesc;
-import com.sun.javadoc.ClassDoc;
 import com.sun.javadoc.RootDoc;
+import org.ckr.msdemo.doclet.model.DataModel;
 
 /**
  * Created by Administrator on 2017/6/1.

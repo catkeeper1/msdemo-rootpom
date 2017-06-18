@@ -154,6 +154,45 @@
                     </dependency>
                 </dependencies>
             </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>2.10.4</version>
+                <executions>
+
+                    <execution>
+                        <id>gen-liquebase-xml</id>
+                        <phase>generate-resources</phase>
+
+                        <configuration>
+                            <doclet>org.ckr.msdemo.doclet.LiquiBaseDoclet</doclet>
+                            <!--<docletPath>"D:/IdeaProjects/msdemo/msdemo-rootpom/buildtool/target/classes"</docletPath>-->
+                            <docletArtifacts>
+                                <artifact>
+                                    <artifactId>build-tool</artifactId>
+                                    <groupId>org.ckr.msdemo</groupId>
+                                    <version>1.0-SNAPSHOT</version>
+                                </artifact>
+                            </docletArtifacts>
+                            <useStandardDocletOptions>false</useStandardDocletOptions>
+                            <skip>${msdemo.skipReportGen}</skip>
+                            <show>protected</show>
+                            <docencoding>UTF-8</docencoding>
+                            <encoding>UTF-8</encoding>
+                            <charset>UTF-8</charset>
+                            <additionalJOptions>
+                                <additionalJOption>-J-Doutput=${project.reporting.outputDirectory}</additionalJOption>
+                            </additionalJOptions>
+                        </configuration>
+                        <goals>
+                            <goal>javadoc</goal>
+                        </goals>
+                    </execution>
+                </executions>
+
+            </plugin>
+
         </plugins>
 
         <extensions>

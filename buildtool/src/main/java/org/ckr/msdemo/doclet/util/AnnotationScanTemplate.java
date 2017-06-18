@@ -1,4 +1,4 @@
-package org.ckr.msdemo.doclet;
+package org.ckr.msdemo.doclet.util;
 
 import com.sun.javadoc.AnnotationDesc;
 import com.sun.javadoc.AnnotationValue;
@@ -26,6 +26,8 @@ public class AnnotationScanTemplate<T> {
     }
 
     private AnnotationScanTemplate<T> addAnnotationHandler(BasicAnnotationHandler<T> handler) {
+
+        handler.setParent(this);
         annotationHandlerList.add(handler);
         return this;
     }
@@ -36,10 +38,13 @@ public class AnnotationScanTemplate<T> {
         return handler;
     }
 
+    public AnnotationHandler<T> annotation(String qualifeidName, SetDataWithAnnotationFunction<T> fun) {
+        BasicAnnotationHandler<T> handler = new BasicAnnotationHandler<T>(qualifeidName, fun);
+        addAnnotationHandler(handler);
+        return handler;
+    }
 
-
-
-    public void scaneAnnotation() {
+    public void scaneProgramElement() {
 
         AnnotationDesc[] anntations = programElementDoc.annotations();
 
@@ -58,6 +63,20 @@ public class AnnotationScanTemplate<T> {
 
     }
 
+    static public<D> D scanAnnotation(D dataObject, AnnotationValue annotation) {
+
+        System.out.println(annotation.value().getClass().toString());
+
+        AnnotationValue[] value = (AnnotationValue[]) annotation.value();
+
+        for(AnnotationValue v : value) {
+            System.out.println(v);
+        }
+
+
+        return dataObject;
+    }
+
     private void callAnnotationHandlers(AnnotationDesc annotation) {
         for (BasicAnnotationHandler<T> handler : this.annotationHandlerList) {
             if (!handler.supported(annotation)) {
@@ -71,9 +90,11 @@ public class AnnotationScanTemplate<T> {
 
     public interface AnnotationHandler<T> {
 
-        AnnotationScanTemplate parent();
+        AnnotationScanTemplate<T> parent();
 
-        AnnotationHandler<T> attribute(String attributeName, SetDataFunction<T> setDataFunction) ;
+        AnnotationHandler<T> attribute(String attributeName, SetDataWithAttributeFunction<T> setDataFunction) ;
+
+        void handle(T dataObject, AnnotationDesc annotation);
     }
 
     public static class BasicAnnotationHandler<T> implements AnnotationHandler<T> {
@@ -84,8 +105,20 @@ public class AnnotationScanTemplate<T> {
 
         private AnnotationScanTemplate parent;
 
+        private SetDataWithAnnotationFunction<T> setDataWithAnnotationFunction = null;
+
         public BasicAnnotationHandler(String annotationQualifiedName) {
             this.annotationQualifiedName = annotationQualifiedName;
+        }
+
+        public BasicAnnotationHandler(String annotationQualifiedName,
+                                      SetDataWithAnnotationFunction<T> setDataWithAnnotationFunction) {
+            this.annotationQualifiedName = annotationQualifiedName;
+            this.setDataWithAnnotationFunction = setDataWithAnnotationFunction;
+        }
+
+        public BasicAnnotationHandler() {
+            this.annotationQualifiedName = "";
         }
 
         public BasicAnnotationHandler<T> addAnnotationAttributeHandler(BasicAnnotationAttributaHandler<T> handler) {
@@ -100,7 +133,7 @@ public class AnnotationScanTemplate<T> {
             return this.annotationQualifiedName.equals(annotation.annotationType().qualifiedName());
         }
 
-
+        @Override
         public void handle(T dataObject, AnnotationDesc annotation) {
 
             preHandle(dataObject, annotation);
@@ -128,7 +161,7 @@ public class AnnotationScanTemplate<T> {
         }
 
         @Override
-        public AnnotationHandler<T> attribute(String attributeName, SetDataFunction<T> setDataFunction) {
+        public AnnotationHandler<T> attribute(String attributeName, SetDataWithAttributeFunction<T> setDataFunction) {
 
             BasicAnnotationAttributaHandler<T> handler = new BasicAnnotationAttributaHandler<T>(attributeName,
                                                                                            setDataFunction);
@@ -138,7 +171,9 @@ public class AnnotationScanTemplate<T> {
         }
 
         protected void preHandle(T dataObject, AnnotationDesc annotation) {
-
+            if(this.setDataWithAnnotationFunction != null) {
+                this.setDataWithAnnotationFunction.setData(dataObject, annotation);
+            }
         }
 
         private void callAnnotationAttributeHandlers(T dataObject,
@@ -164,9 +199,9 @@ public class AnnotationScanTemplate<T> {
 
         private AnnotationHandler<T> parent;
 
-        private SetDataFunction<T> setDataFunction;
+        private SetDataWithAttributeFunction<T> setDataFunction;
 
-        public BasicAnnotationAttributaHandler(String attributeName, SetDataFunction<T> setDataFunction) {
+        public BasicAnnotationAttributaHandler(String attributeName, SetDataWithAttributeFunction<T> setDataFunction) {
 
             this.attributeName = attributeName;
             this.setDataFunction = setDataFunction;
@@ -194,7 +229,11 @@ public class AnnotationScanTemplate<T> {
 
     }
 
-    public interface SetDataFunction<T> {
+    public interface SetDataWithAnnotationFunction<T> {
+        void setData(T dataObject, AnnotationDesc annotation);
+    }
+
+    public interface SetDataWithAttributeFunction<T> {
         void setData(T dataObject, AnnotationValue annotationValue);
     }
 }

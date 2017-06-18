@@ -1,4 +1,4 @@
-package org.ckr.msdemo.doclet;
+package org.ckr.msdemo.doclet.util;
 
 import com.sun.javadoc.AnnotationDesc;
 import com.sun.javadoc.AnnotationTypeDoc;
@@ -7,6 +7,7 @@ import com.sun.javadoc.ClassDoc;
 import com.sun.javadoc.MethodDoc;
 import com.sun.javadoc.ProgramElementDoc;
 
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -96,6 +97,34 @@ public class DocletUtil {
         }
 
         return result;
+
+    }
+
+    public static String getPackageName(ClassDoc classDoc) {
+
+        if(!classDoc.qualifiedTypeName().contains(".")) {
+            return "";
+        }
+
+        return classDoc.qualifiedTypeName().substring(0, classDoc.qualifiedTypeName().lastIndexOf("."));
+
+    }
+
+    public static String getMethodName(MethodDoc method) {
+        String name = method.name();
+
+        if(name.length() <= 3) {
+            return name;
+        }
+
+        name = name.substring(3,4).toLowerCase() + name.substring(4, name.length());
+
+        return name;
+
+    }
+
+    public static String getFieldTypeName(MethodDoc method) {
+        return method.returnType().qualifiedTypeName();
 
     }
 
