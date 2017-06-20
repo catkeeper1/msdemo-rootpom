@@ -128,4 +128,8 @@ public class DocletUtil {
 
     }
 
+    public static String getOutputDirPath() {
+        return System.getProperty("output");
+    }
+
 }

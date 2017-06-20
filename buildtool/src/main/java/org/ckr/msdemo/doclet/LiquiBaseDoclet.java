@@ -2,6 +2,8 @@ package org.ckr.msdemo.doclet;
 
 import com.sun.javadoc.RootDoc;
 import org.ckr.msdemo.doclet.model.DataModel;
+import org.ckr.msdemo.doclet.util.DocletUtil;
+import org.ckr.msdemo.doclet.writter.LiquibaseWritter;
 
 /**
  * Created by Administrator on 2017/6/1.
@@ -37,6 +39,8 @@ public class LiquiBaseDoclet {
 //        }
 
         DataModel dataModel = new DataModel(root.classes());
+
+        new LiquibaseWritter(DocletUtil.getOutputDirPath(), dataModel).generateXmlConfigDoc();
 
         return true;
     }

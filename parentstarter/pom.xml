@@ -186,7 +186,7 @@
                             </additionalJOptions>
                         </configuration>
                         <goals>
-                            <goal>javadoc</goal>
+                            <goal>aggregate</goal>
                         </goals>
                     </execution>
                 </executions>

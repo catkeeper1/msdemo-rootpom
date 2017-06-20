@@ -167,6 +167,7 @@ public class Column {
                 .scaneProgramElement();
 
 
+
             if(column.getName() == null) {
                 continue;
             }
@@ -176,6 +177,13 @@ public class Column {
 
             column.setComment(method.commentText());
             result.add(column);
+        }
+
+        if(result.size() > 0 && classDoc.superclass() != null) {
+
+            List<Column> superClassResult = createColumns(classDoc.superclass());
+
+            result.addAll(superClassResult);
         }
 
         return result;
@@ -195,5 +203,43 @@ public class Column {
                 ", javaFieldType=" + javaFieldType +
                 ", comment=" + comment +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Column column = (Column) o;
+
+        if (name != null ? !name.equals(column.name) : column.name != null) return false;
+        if (nullable != null ? !nullable.equals(column.nullable) : column.nullable != null) return false;
+        if (isPrimaryKey != null ? !isPrimaryKey.equals(column.isPrimaryKey) : column.isPrimaryKey != null)
+            return false;
+        if (columnDefinition != null ? !columnDefinition.equals(column.columnDefinition) : column.columnDefinition != null)
+            return false;
+        if (length != null ? !length.equals(column.length) : column.length != null) return false;
+        if (precision != null ? !precision.equals(column.precision) : column.precision != null) return false;
+        if (scale != null ? !scale.equals(column.scale) : column.scale != null) return false;
+        if (javaFieldName != null ? !javaFieldName.equals(column.javaFieldName) : column.javaFieldName != null)
+            return false;
+        if (javaFieldType != null ? !javaFieldType.equals(column.javaFieldType) : column.javaFieldType != null)
+            return false;
+        return comment != null ? comment.equals(column.comment) : column.comment == null;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = name != null ? name.hashCode() : 0;
+        result = 31 * result + (nullable != null ? nullable.hashCode() : 0);
+        result = 31 * result + (isPrimaryKey != null ? isPrimaryKey.hashCode() : 0);
+        result = 31 * result + (columnDefinition != null ? columnDefinition.hashCode() : 0);
+        result = 31 * result + (length != null ? length.hashCode() : 0);
+        result = 31 * result + (precision != null ? precision.hashCode() : 0);
+        result = 31 * result + (scale != null ? scale.hashCode() : 0);
+        result = 31 * result + (javaFieldName != null ? javaFieldName.hashCode() : 0);
+        result = 31 * result + (javaFieldType != null ? javaFieldType.hashCode() : 0);
+        result = 31 * result + (comment != null ? comment.hashCode() : 0);
+        return result;
     }
 }

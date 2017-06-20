@@ -144,4 +144,28 @@ public class Table {
                 ", comment=" + comment +
                 '}';
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Table table = (Table) o;
+
+        if (tableName != null ? !tableName.equals(table.tableName) : table.tableName != null) return false;
+        if (packageName != null ? !packageName.equals(table.packageName) : table.packageName != null) return false;
+        if (indexList != null ? !indexList.equals(table.indexList) : table.indexList != null) return false;
+        if (columnList != null ? !columnList.equals(table.columnList) : table.columnList != null) return false;
+        return comment != null ? comment.equals(table.comment) : table.comment == null;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = tableName != null ? tableName.hashCode() : 0;
+        result = 31 * result + (packageName != null ? packageName.hashCode() : 0);
+        result = 31 * result + (indexList != null ? indexList.hashCode() : 0);
+        result = 31 * result + (columnList != null ? columnList.hashCode() : 0);
+        result = 31 * result + (comment != null ? comment.hashCode() : 0);
+        return result;
+    }
 }

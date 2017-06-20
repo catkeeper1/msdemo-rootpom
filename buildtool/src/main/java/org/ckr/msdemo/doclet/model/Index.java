@@ -134,4 +134,23 @@ public class Index {
         }
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Index index = (Index) o;
+
+        if (name != null ? !name.equals(index.name) : index.name != null) return false;
+        if (columnList != null ? !columnList.equals(index.columnList) : index.columnList != null) return false;
+        return unique != null ? unique.equals(index.unique) : index.unique == null;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = name != null ? name.hashCode() : 0;
+        result = 31 * result + (columnList != null ? columnList.hashCode() : 0);
+        result = 31 * result + (unique != null ? unique.hashCode() : 0);
+        return result;
+    }
 }
