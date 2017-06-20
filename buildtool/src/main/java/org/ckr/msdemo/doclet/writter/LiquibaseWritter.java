@@ -29,6 +29,12 @@ public class LiquibaseWritter {
             throw new RuntimeException(dir.getAbsolutePath() + " is not a valid dir.");
         }
 
+        dir = new File(dir, "liquibaseXml");
+
+        if(!dir.exists()) {
+            dir.mkdir();
+        }
+
         baseDir = dir;
     }
 
