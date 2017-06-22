@@ -182,7 +182,7 @@
                             <encoding>UTF-8</encoding>
                             <charset>UTF-8</charset>
                             <additionalJOptions>
-                                <additionalJOption>-J-Doutput=${project.reporting.outputDirectory}</additionalJOption>
+                                <additionalJOption>-J-Doutput=${project.build.directory}</additionalJOption>
                             </additionalJOptions>
                         </configuration>
                         <goals>

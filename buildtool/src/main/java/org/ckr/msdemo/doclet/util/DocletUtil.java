@@ -7,14 +7,18 @@ import com.sun.javadoc.ClassDoc;
 import com.sun.javadoc.MethodDoc;
 import com.sun.javadoc.ProgramElementDoc;
 
+import java.io.File;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.StringTokenizer;
 
 /**
  * Created by Administrator on 2017/6/13.
  */
 public class DocletUtil {
+
+    public static final String ENTER = "\r\n";
 
     public static void logMsg(String msg) {
         //can be replaced by other logger later.
@@ -130,6 +134,33 @@ public class DocletUtil {
 
     public static String getOutputDirPath() {
         return System.getProperty("output");
+    }
+
+    public static File createDirectory(File baseDir, String path) {
+
+        File result = baseDir;
+
+        StringTokenizer tokenizer = new StringTokenizer(path, ".");
+
+        while(tokenizer.hasMoreTokens()) {
+            result = new File(result, tokenizer.nextToken());
+            if(!result.exists()) {
+                if(!result.mkdirs()) {
+                    throw new RuntimeException("Cannot create directory " + result.getAbsolutePath());
+                }
+            }
+        }
+
+        return result;
+
+    }
+
+    public static String indent(int noOfIndent) {
+        StringBuilder result = new StringBuilder("");
+        for(int i = 0 ; i < noOfIndent; i++) {
+            result.append("    ");
+        }
+        return result.toString();
     }
 
 }

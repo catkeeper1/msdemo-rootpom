@@ -19,7 +19,12 @@ public class DataModel {
         this.classeDocs = classeDocs;
 
         for(int i = 0 ; i < classeDocs.length; i++) {
-            tableList.add(Table.createEntity(classeDocs[i]));
+
+            Table table = Table.createEntity(classeDocs[i]);
+            if(table == null) {
+                continue;
+            }
+            tableList.add(table);
         }
     }
 

@@ -2,11 +2,15 @@ package org.ckr.msdemo.doclet.writter;
 
 import org.ckr.msdemo.doclet.model.DataModel;
 import org.ckr.msdemo.doclet.model.Table;
+import org.ckr.msdemo.doclet.util.DocletUtil;
 
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
+
+import static org.ckr.msdemo.doclet.util.DocletUtil.indent;
+import static org.ckr.msdemo.doclet.util.DocletUtil.ENTER;
 
 /**
  * Created by Administrator on 2017/6/20.
@@ -32,16 +36,20 @@ public class LiquibaseWritter {
         dir = new File(dir, "liquibaseXml");
 
         if(!dir.exists()) {
-            dir.mkdir();
+            if(!dir.mkdir()) {
+                throw new RuntimeException("cannot create directory:" + dir.getAbsolutePath());
+            }
         }
 
-        baseDir = dir;
+        this.baseDir = dir;
     }
 
-    protected File createDocFile(Table table) {
-        File result = new File(baseDir, table.getPackageName().replace(".", "/"));
+    private File createDocFile(Table table) {
 
-        result.mkdir();
+
+        File result = DocletUtil.createDirectory(this.baseDir,
+                                                 table.getPackageName().replace(".", "/"));
+
 
         result = new File(result, "db.changelog.create_" + table.getTableName() + ".xml");
 
@@ -64,6 +72,7 @@ public class LiquibaseWritter {
             FileWriter docWriter = null;
             try {
                 docWriter = new FileWriter(docFile);
+                this.writeDoc(table, docWriter);
             } catch (IOException ioExp) {
                 throw new RuntimeException(ioExp);
             } finally {
@@ -82,14 +91,36 @@ public class LiquibaseWritter {
 
     private void writeDoc(Table table, OutputStreamWriter writter) throws IOException{
         //write header
-        writter.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>" + "\r\n");
-        writter.write("<databaseChangeLog" + "\r\n");
-        writter.write("        xmlns=\"http://www.liquibase.org/xml/ns/dbchangelog\"" + "\r\n");
-        writter.write("        xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"" + "\r\n");
-        writter.write("        xsi:schemaLocation=\"http://www.liquibase.org/xml/ns/dbchangelog" + "\r\n");
-        writter.write("         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd\">" + "\r\n");
+        writter.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>" + ENTER);
+        writter.write("<databaseChangeLog" + ENTER);
+        writter.write("        xmlns=\"http://www.liquibase.org/xml/ns/dbchangelog\"" + ENTER);
+        writter.write("        xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"" + ENTER);
+        writter.write("        xsi:schemaLocation=\"http://www.liquibase.org/xml/ns/dbchangelog" + ENTER);
+        writter.write("         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd\">" + ENTER);
+        writter.write(indent(1) + "<changeSet author=\"liquibase-docs\" id=\"createTable-"+
+                table.getPackageName() + "." + table.getTableName()+"\">"  + ENTER);
+        writter.write(ENTER);
 
+        writeTableContent(table, writter);
+
+
+        writter.write(ENTER);
+        writter.write(indent(1) + "</changeSet>" + ENTER);
+
+
+        //the end
+        writter.write("</databaseChangeLog>");
+    }
+
+    private void writeTableContent(Table table, OutputStreamWriter writter) throws IOException{
+        writter.write(indent(2) + "<createTable tableName=\"" +
+                table.getTableName() + "\">" + ENTER);
+
+
+
+        writter.write(indent(2) + "</createTable>" + ENTER);
 
     }
+
 
 }
