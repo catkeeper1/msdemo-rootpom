@@ -73,6 +73,7 @@ public class LiquibaseWritter {
             try {
                 docWriter = new FileWriter(docFile);
                 this.writeDoc(table, docWriter);
+                docWriter.flush();
             } catch (IOException ioExp) {
                 throw new RuntimeException(ioExp);
             } finally {
