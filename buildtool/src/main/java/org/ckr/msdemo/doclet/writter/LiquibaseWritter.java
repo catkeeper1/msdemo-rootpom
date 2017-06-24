@@ -1,6 +1,8 @@
 package org.ckr.msdemo.doclet.writter;
 
+import org.ckr.msdemo.doclet.model.Column;
 import org.ckr.msdemo.doclet.model.DataModel;
+import org.ckr.msdemo.doclet.model.Index;
 import org.ckr.msdemo.doclet.model.Table;
 import org.ckr.msdemo.doclet.util.DocletUtil;
 
@@ -11,6 +13,9 @@ import java.io.OutputStreamWriter;
 
 import static org.ckr.msdemo.doclet.util.DocletUtil.indent;
 import static org.ckr.msdemo.doclet.util.DocletUtil.ENTER;
+import static org.ckr.msdemo.doclet.util.DocletUtil.CHANGE_SET_END;
+import static org.ckr.msdemo.doclet.util.DocletUtil.writeChangeSet;
+import static org.ckr.msdemo.doclet.util.DocletUtil.getColumnType;
 
 /**
  * Created by Administrator on 2017/6/20.
@@ -92,36 +97,116 @@ public class LiquibaseWritter {
 
     private void writeDoc(Table table, OutputStreamWriter writter) throws IOException{
         //write header
-        writter.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>" + ENTER);
-        writter.write("<databaseChangeLog" + ENTER);
-        writter.write("        xmlns=\"http://www.liquibase.org/xml/ns/dbchangelog\"" + ENTER);
-        writter.write("        xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"" + ENTER);
-        writter.write("        xsi:schemaLocation=\"http://www.liquibase.org/xml/ns/dbchangelog" + ENTER);
-        writter.write("         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd\">" + ENTER);
-        writter.write(indent(1) + "<changeSet author=\"liquibase-docs\" id=\"createTable-"+
-                table.getPackageName() + "." + table.getTableName()+"\">"  + ENTER);
-        writter.write(ENTER);
+        writter.write(DocletUtil.DOC_HEADER);
 
         writeTableContent(table, writter);
 
+        writePrimaryContent(table, writter);
 
-        writter.write(ENTER);
-        writter.write(indent(1) + "</changeSet>" + ENTER);
-
-
+        writeIndexContent(table, writter);
         //the end
-        writter.write("</databaseChangeLog>");
+        writter.write(DocletUtil.DOC_END);
     }
 
     private void writeTableContent(Table table, OutputStreamWriter writter) throws IOException{
+        writeChangeSet(writter,"createTable-" + table.getPackageName() + "." + table.getTableName());
+        writter.write(ENTER);
+
         writter.write(indent(2) + "<createTable tableName=\"" +
                 table.getTableName() + "\">" + ENTER);
 
-
+        for(Column column : table.getColumnList()) {
+            this.writeColumnContent(column, writter);
+        }
 
         writter.write(indent(2) + "</createTable>" + ENTER);
+        writter.write(DocletUtil.CHANGE_SET_END);
+    }
+
+    private void writePrimaryContent(Table table, OutputStreamWriter writter) throws IOException{
+        StringBuilder fieldNames = new StringBuilder("");
+        for(Column column : table.getColumnList()) {
+            if(Boolean.TRUE.equals(column.getIsPrimaryKey())) {
+
+                if(fieldNames.length() > 0) {
+                    fieldNames.append(",");
+                }
+
+                fieldNames.append(column.getName());
+
+            }
+        }
+
+        if(fieldNames.length() == 0) {
+            return;
+        }
+
+        writeChangeSet(writter,"createTablePk-" + table.getPackageName() + "." + table.getTableName());
+        writter.write(ENTER);
+
+        writter.write(indent(2) + "<addPrimaryKey " +
+
+                "constraintName=\"" + "PK_" + table.getTableName() + "\" " +
+                "columnNames=\"" + fieldNames.toString() + "\" " +
+                "tableName=\"" + table.getTableName() + "\" />" + ENTER);
+
+        writter.write(DocletUtil.CHANGE_SET_END);
+    }
+
+    private void writeIndexContent(Table table, OutputStreamWriter writter) throws IOException{
+
+        if(table.getIndexList().isEmpty()) {
+            return;
+        }
+
+        writeChangeSet(writter,"createTableIndex-" + table.getPackageName() + "." + table.getTableName());
+
+        int noOfIndex = 0;
+
+        for(Index index : table.getIndexList()) {
+
+            boolean unique = false;
+            if(Boolean.TRUE.equals(index.getUnique())) {
+                unique = true;
+            }
+
+            String indexName = "IND_" + table.getTableName() + "_" + noOfIndex;
+
+            if(index.getName() != null) {
+                indexName = index.getName();
+            }
+
+            writter.write(indent(2) + "<createIndex " +
+                    "indexName=\"" + indexName + "\" " +
+                    "tableName=\"" + table.getTableName() + "\" " +
+                    "unique=\"" + unique + "\">" + ENTER);
+
+            for(Index.IndexColumn indexColumn : index.getColumnList()) {
+
+                writter.write(indent(3) + "<column name=\"" + indexColumn.getName() + "\"/>" + ENTER);
+
+            }
+
+            writter.write(indent(2) + "</createIndex>" + ENTER);
+
+            noOfIndex++;
+        }
+        writter.write(DocletUtil.CHANGE_SET_END);
+    }
+
+    private void writeColumnContent(Column column, OutputStreamWriter writter) throws IOException{
+
+        writter.write(indent(3) +
+                "<column name=\"" + column.getName() + "\" type=\"" + getColumnType(column) + "\"/>" + ENTER);
 
     }
 
+    private String getPrimaryKeyAttribute(Column column) {
+        if(Boolean.TRUE.equals(column.getIsPrimaryKey())) {
+            return "primaryKey=true";
+        }
+
+        return "";
+    }
 
 }

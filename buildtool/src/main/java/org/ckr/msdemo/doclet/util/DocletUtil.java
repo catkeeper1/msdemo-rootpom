@@ -6,10 +6,17 @@ import com.sun.javadoc.AnnotationValue;
 import com.sun.javadoc.ClassDoc;
 import com.sun.javadoc.MethodDoc;
 import com.sun.javadoc.ProgramElementDoc;
+import org.ckr.msdemo.doclet.model.Column;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.lang.reflect.Method;
+import java.math.BigDecimal;
+import java.sql.Timestamp;
+import java.sql.Types;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.StringTokenizer;
 
@@ -19,6 +26,23 @@ import java.util.StringTokenizer;
 public class DocletUtil {
 
     public static final String ENTER = "\r\n";
+
+    public static final String DOC_HEADER =
+                       "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" + ENTER +
+                       "<databaseChangeLog" + ENTER +
+                       "        xmlns=\"http://www.liquibase.org/xml/ns/dbchangelog\"" + ENTER +
+                       "        xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"" + ENTER +
+                       "        xsi:schemaLocation=\"http://www.liquibase.org/xml/ns/dbchangelog" + ENTER +
+                       "         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd\">" + ENTER;
+
+    public static final String DOC_END = "</databaseChangeLog>";
+
+    public static void writeChangeSet(OutputStreamWriter writter, String changeId) throws IOException {
+        writter.write(indent(1) + "<changeSet author=\"liquibase-docs\" id=\"" +
+                changeId +"\">" + ENTER);
+    }
+
+    public static final String CHANGE_SET_END = indent(1) + "</changeSet>" + ENTER;
 
     public static void logMsg(String msg) {
         //can be replaced by other logger later.
@@ -161,6 +185,57 @@ public class DocletUtil {
             result.append("    ");
         }
         return result.toString();
+    }
+
+    public static String getColumnType(Column column) {
+        String result = "";
+
+        Integer length = null;
+        Integer scale = null;
+        Integer precision = null;
+
+        if(String.class.getName().equals(column.getJavaFieldType())) {
+            length = 100;
+            result = "java.sql.Types.VARCHAR";
+        }
+        else if(Boolean.class.getName().equals(column.getJavaFieldType())) {
+            result = "java.sql.Types.BOOLEAN";
+        }
+        else if(Date.class.getName().equals(column.getJavaFieldType())) {
+            result = "java.sql.Types.DATE";
+        } else if(java.sql.Date.class.getName().equals(column.getJavaFieldType())) {
+            result = "java.sql.Types.DATE";
+        } else if(Timestamp.class.getName().equals(column.getJavaFieldType())) {
+            result = "java.sql.Types.TIMESTAMP";
+        } else if(BigDecimal.class.getName().equals(column.getJavaFieldType())) {
+            scale = 19;
+            precision = 4;
+            result = "java.sql.Types.DECIMAL";
+        }
+
+        if(column.getColumnDefinition() != null && column.getColumnDefinition().trim().length() > 0) {
+            result = column.getColumnDefinition();
+        }
+
+        if(column.getLength() != null) {
+            length = column.getLength();
+        }
+
+        if(column.getScale() != null) {
+            scale = column.getScale();
+        }
+
+        if(column.getPrecision() != null) {
+            precision = column.getPrecision();
+        }
+
+        if(length != null) {
+            result = result + "(" + length + ")";
+        } else if(scale != null) {
+            result = result + "(" + scale + ", " + precision +")";
+        }
+
+        return result;
     }
 
 }
