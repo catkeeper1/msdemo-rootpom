@@ -74,6 +74,7 @@
                 <artifactId>springfox-swagger-ui</artifactId>
                 <version>${swagger.version}</version>
             </dependency>
+
         </dependencies>
     </dependencyManagement>
 
@@ -109,7 +110,33 @@
                         <artifactId>checkstyle</artifactId>
                         <version>7.2</version>
                     </dependency>
+                    <dependency>
+                        <groupId>org.ckr.msdemo</groupId>
+                        <artifactId>build-tool</artifactId>
+                        <version>${project.version}</version>
+                    </dependency>
                 </dependencies>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-pmd-plugin</artifactId>
+                <version>3.8</version>
+                <dependencies>
+
+                    <dependency>
+                        <groupId>org.ckr.msdemo</groupId>
+                        <artifactId>build-tool</artifactId>
+                        <version>${project.version}</version>
+                    </dependency>
+                </dependencies>
+                <configuration>
+                    <targetJdk>1.8</targetJdk>
+                    <rulesets>
+                        <ruleset>org/ckr/msdemo/pmd/pmd.xml</ruleset>
+                    </rulesets>
+                    <printFailingErrors>true</printFailingErrors>
+                </configuration>
             </plugin>
 
             <plugin>
@@ -155,6 +182,16 @@
                         <artifactId>spring-boot-starter-data-jpa</artifactId>
                         <version>${springboot.version}</version>
                     </dependency>
+                    <dependency>
+                        <groupId>org.springframework.boot</groupId>
+                        <artifactId>spring-boot-starter-web</artifactId>
+                        <version>${springboot.version}</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>org.ckr.msdemo</groupId>
+                        <artifactId>exceptions</artifactId>
+                        <version>1.0-SNAPSHOT</version>
+                    </dependency>
                 </dependencies>
             </plugin>
 
@@ -175,12 +212,12 @@
                                 <artifact>
                                     <artifactId>build-tool</artifactId>
                                     <groupId>org.ckr.msdemo</groupId>
-                                    <version>1.0-SNAPSHOT</version>
+                                    <version>${project.version}</version>
                                 </artifact>
                             </docletArtifacts>
                             <useStandardDocletOptions>false</useStandardDocletOptions>
                             <skip>${msdemo.skipReportGen}</skip>
-                            <show>protected</show>
+                            <!--<show>protected</show>-->
                             <docencoding>UTF-8</docencoding>
                             <encoding>UTF-8</encoding>
                             <charset>UTF-8</charset>
@@ -198,13 +235,13 @@
 
         </plugins>
 
-        <extensions>
-            <extension>
-                <groupId>org.ckr.msdemo</groupId>
-                <artifactId>build-tool</artifactId>
-                <version>${project.version}</version>
-            </extension>
-        </extensions>
+        <!--<extensions>-->
+            <!--<extension>-->
+                <!--<groupId>org.ckr.msdemo</groupId>-->
+                <!--<artifactId>build-tool</artifactId>-->
+                <!--<version>${project.version}</version>-->
+            <!--</extension>-->
+        <!--</extensions>-->
     </build>
 
     <reporting>
@@ -217,16 +254,17 @@
                     <reportSet>
                         <reports>
                             <report>index</report>
-                            <!--<report>dependency-convergence</report>-->
-                            <!--<report>dependency-info</report>-->
-                            <!--<report>dependencies</report>-->
-                            <!--<report>modules</report>-->
-                            <!--<report>plugin-management</report>-->
-                            <!--<report>plugins</report>-->
+                            <report>dependency-convergence</report>
+                            <report>dependency-info</report>
+                            <report>dependencies</report>
+                            <report>modules</report>
+                            <report>plugin-management</report>
+                            <report>plugins</report>
                         </reports>
                     </reportSet>
                 </reportSets>
                 <configuration>
+                    <skip>${msdemo.skipReportGen}</skip>
                     <dependencyLocationsEnabled>false</dependencyLocationsEnabled>
                 </configuration>
             </plugin>
@@ -241,21 +279,21 @@
                 <!--</configuration>-->
             <!--</plugin>-->
 
-            <!--<plugin>-->
-                <!--<groupId>org.apache.maven.plugins</groupId>-->
-                <!--<artifactId>maven-checkstyle-plugin</artifactId>-->
-                <!--<reportSets>-->
-                    <!--<reportSet>-->
-                        <!--<reports>-->
-                            <!--<report>checkstyle</report>-->
-                        <!--</reports>-->
-                    <!--</reportSet>-->
-                <!--</reportSets>-->
-                <!--<configuration>-->
-                    <!--<skip>${msdemo.skipReportGen}</skip>-->
-                    <!--<configLocation>org/ckr/msdemo/checkstyle/checkstyle.xml</configLocation>-->
-                <!--</configuration>-->
-            <!--</plugin>-->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-checkstyle-plugin</artifactId>
+                <reportSets>
+                    <reportSet>
+                        <reports>
+                            <report>checkstyle</report>
+                        </reports>
+                    </reportSet>
+                </reportSets>
+                <configuration>
+                    <skip>${msdemo.skipReportGen}</skip>
+                    <configLocation>org/ckr/msdemo/checkstyle/checkstyle.xml</configLocation>
+                </configuration>
+            </plugin>
 
 
             <plugin>
@@ -263,39 +301,42 @@
                 <artifactId>maven-javadoc-plugin</artifactId>
                 <version>2.10.4</version>
                 <configuration>
-                    <doclet>org.ckr.msdemo.doclet.LiquiBaseDoclet</doclet>
-                    <!--<docletPath>"D:/IdeaProjects/msdemo/msdemo-rootpom/buildtool/target/classes"</docletPath>-->
-                    <docletArtifacts>
-                        <artifact>
-                            <artifactId>build-tool</artifactId>
-                            <groupId>org.ckr.msdemo</groupId>
-                            <version>1.0-SNAPSHOT</version>
-                        </artifact>
-                    </docletArtifacts>
-                    <useStandardDocletOptions>false</useStandardDocletOptions>
                     <skip>${msdemo.skipReportGen}</skip>
                     <show>protected</show>
                     <docencoding>UTF-8</docencoding>
                     <encoding>UTF-8</encoding>
                     <charset>UTF-8</charset>
-                    <additionalJOptions>
-                        <additionalJOption>-J-Doutput=${project.reporting.outputDirectory}</additionalJOption>
-
-                    </additionalJOptions>
                 </configuration>
 
             </plugin>
 
-            <!--<plugin>-->
-                <!--<groupId>org.codehaus.mojo</groupId>-->
-                <!--<artifactId>findbugs-maven-plugin</artifactId>-->
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>findbugs-maven-plugin</artifactId>
 
-                <!--<configuration>-->
-                    <!--<skip>${msdemo.skipReportGen}</skip>-->
-                    <!--<effort>Max</effort>-->
-                    <!--<classFilesDirectory>${project.basedir}/target/allClasses</classFilesDirectory>-->
-                <!--</configuration>-->
-            <!--</plugin>-->
+                <configuration>
+                    <skip>${msdemo.skipReportGen}</skip>
+                    <effort>Max</effort>
+                    <classFilesDirectory>${project.basedir}/target/allClasses</classFilesDirectory>
+                </configuration>
+            </plugin>
+
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-pmd-plugin</artifactId>
+                <configuration>
+                    <sourceEncoding>UTF-8</sourceEncoding>
+                    <skip>${msdemo.skipReportGen}</skip>
+
+                    <aggregate>true</aggregate>
+                    <rulesets>
+                        <ruleset>org/ckr/msdemo/pmd/pmd.xml</ruleset>
+                    </rulesets>
+                </configuration>
+
+            </plugin>
+
         </plugins>
     </reporting>
 </project>
