@@ -21,6 +21,12 @@
         <swagger.version>2.7.0</swagger.version>
     </properties>
 
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>1.5.1.RELEASE</version>
+    </parent>
+
     <dependencyManagement>
         <dependencies>
             <dependency>
@@ -31,13 +37,13 @@
                 <scope>import</scope>
             </dependency>
 
-            <dependency>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-starter-parent</artifactId>
-                <version>${springboot.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
+            <!--<dependency>-->
+                <!--<groupId>org.springframework.boot</groupId>-->
+                <!--<artifactId>spring-boot-starter-parent</artifactId>-->
+                <!--<version>${springboot.version}</version>-->
+                <!--<type>pom</type>-->
+                <!--<scope>import</scope>-->
+            <!--</dependency>-->
 
             <dependency>
                 <groupId>org.hibernate</groupId>
@@ -187,11 +193,7 @@
                         <artifactId>spring-boot-starter-web</artifactId>
                         <version>${springboot.version}</version>
                     </dependency>
-                    <dependency>
-                        <groupId>org.ckr.msdemo</groupId>
-                        <artifactId>exceptions</artifactId>
-                        <version>1.0-SNAPSHOT</version>
-                    </dependency>
+
                 </dependencies>
             </plugin>
 
