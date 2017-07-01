@@ -194,6 +194,12 @@
                         <version>${springboot.version}</version>
                     </dependency>
 
+                    <dependency>
+                        <groupId>org.ckr.msdemo</groupId>
+                        <artifactId>build-tool</artifactId>
+                        <version>${project.version}</version>
+                    </dependency>
+
                 </dependencies>
             </plugin>
 
@@ -318,8 +324,10 @@
 
                 <configuration>
                     <skip>${msdemo.skipReportGen}</skip>
+                    <skipEmptyReport>false</skipEmptyReport>
                     <effort>Max</effort>
                     <classFilesDirectory>${project.basedir}/target/allClasses</classFilesDirectory>
+                    <excludeFilterFile>org/ckr/msdemo/findbugs/findbugs_filter.xml</excludeFilterFile>
                 </configuration>
             </plugin>
 
@@ -330,7 +338,7 @@
                 <configuration>
                     <sourceEncoding>UTF-8</sourceEncoding>
                     <skip>${msdemo.skipReportGen}</skip>
-
+                    <skipEmptyReport>false</skipEmptyReport>
                     <aggregate>true</aggregate>
                     <rulesets>
                         <ruleset>org/ckr/msdemo/pmd/pmd.xml</ruleset>
