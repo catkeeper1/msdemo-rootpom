@@ -1,5 +1,7 @@
 package org.ckr.msdemo.doclet.model;
 
+import com.sun.javadoc.AnnotationDesc;
+import com.sun.javadoc.AnnotationValue;
 import com.sun.javadoc.ClassDoc;
 import com.sun.javadoc.MethodDoc;
 import org.ckr.msdemo.doclet.util.AnnotationScanTemplate;
@@ -18,6 +20,8 @@ public class Column {
     public static final String COLUMN_ID_QUALIFIED_NAME = "javax.persistence.Id";
 
     public static final String COLUMN_NAME = "name";
+
+    public static final String JOIN_TABLE_COLUMN_NAME = "name";
 
     public static final String COLUMN_NULLABLE = "nullable";
 
@@ -187,6 +191,26 @@ public class Column {
         }
 
         return result;
+    }
+
+    public static Column createJoinTableColumn(AnnotationValue indexAnnotation) {
+
+        Column result = new Column();
+
+        AnnotationScanTemplate.BasicAnnotationHandler<Column> annotationHandler =
+                new AnnotationScanTemplate.BasicAnnotationHandler<>();
+
+
+        annotationHandler
+                .attribute(JOIN_TABLE_COLUMN_NAME,
+                        (data, annotationValue) -> data.setName((String)annotationValue.value()))
+                .handle(result, (AnnotationDesc) indexAnnotation.value());
+
+        if(result.getName() != null) {
+            return result;
+        }
+
+        return null;
     }
 
     @Override

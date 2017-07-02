@@ -28,6 +28,8 @@ public class Table {
 
     private String packageName = null;
 
+    private String className = null;
+
     private List<Index> indexList = new ArrayList<>();
 
     private List<Column> columnList = new ArrayList<>();
@@ -62,6 +64,18 @@ public class Table {
 
     private void setPackageName(String packageName) {
         this.packageName = packageName;
+    }
+
+    public String getFullClassName() {
+        return this.getPackageName() + "." + this.getClassName();
+    }
+
+    public String getClassName() {
+        return className;
+    }
+
+    private void setClassName(String className) {
+        this.className = className;
     }
 
     private void addIndex(Index index) {
@@ -103,6 +117,8 @@ public class Table {
 
         instance.setPackageName(DocletUtil.getPackageName(classDoc));
 
+        instance.setClassName(classDoc.name());
+
         List<Column> columnList = Column.createColumns(classDoc);
 
         instance.setColumnList(columnList);
@@ -131,7 +147,72 @@ public class Table {
 
     }
 
+    public static Table convertFromJoinTable(JoinTable joinTable, List<Table> existTables) {
+        Table result = new Table();
 
+        result.setTableName(joinTable.getTableName());
+
+
+
+        Table joinedTable = null;
+
+        for (Table table : existTables) {
+            if(table.getFullClassName().equals(joinTable.getJoinFullClassName())) {
+                joinedTable = table;
+                break;
+            }
+        }
+
+        if(joinedTable == null) {
+            throw new RuntimeException("Cannot find joined table for:" + joinTable);
+        }
+
+        result.setPackageName(joinedTable.getPackageName());
+
+        Table inversedTable = null;
+
+        for (Table table : existTables) {
+            if(table.getFullClassName().equals(joinTable.getInverseFullClassName())) {
+                inversedTable = table;
+                break;
+            }
+        }
+
+        if(inversedTable == null) {
+            throw new RuntimeException("Cannot find inversed table for:" + joinTable);
+        }
+
+        List<Column> resultColumnList = new ArrayList<>();
+
+        for (Column joinColumn : joinTable.getJoinColumnList()) {
+
+            for (Column column : joinedTable.getColumnList()) {
+                if (joinColumn.getName().equals(column.getName())) {
+                    resultColumnList.add(column);
+                }
+            }
+
+        }
+
+        for (Column invesColumn : joinTable.getInverseColumnList()) {
+
+            for (Column column : inversedTable.getColumnList()) {
+                if (invesColumn.getName().equals(column.getName())) {
+                    resultColumnList.add(column);
+                }
+            }
+
+        }
+
+
+        result.setClassName("");
+
+        result.setColumnList(resultColumnList);
+
+        DocletUtil.logMsg("converted table:" + result.toString());
+
+        return result;
+    }
 
 
     @Override
@@ -139,6 +220,7 @@ public class Table {
         return "Table{" +
                 "tableName='" + tableName + '\'' +
                 ", packageName='" + packageName + '\'' +
+                ", className='" + className + '\'' +
                 ", indexList=" + indexList +
                 ", columnList=" + columnList +
                 ", comment=" + comment +

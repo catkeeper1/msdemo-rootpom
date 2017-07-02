@@ -1,5 +1,6 @@
 package org.ckr.msdemo.doclet;
 
+import com.sun.javadoc.LanguageVersion;
 import com.sun.javadoc.RootDoc;
 import org.ckr.msdemo.doclet.model.DataModel;
 import org.ckr.msdemo.doclet.util.DocletUtil;
@@ -23,5 +24,9 @@ public class LiquiBaseDoclet {
         writter.generateIncludeXmlConfig();
 
         return true;
+    }
+
+    public static LanguageVersion languageVersion() {
+        return LanguageVersion.JAVA_1_5;
     }
 }
