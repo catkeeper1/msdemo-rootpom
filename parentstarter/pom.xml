@@ -19,6 +19,7 @@
         <msdemo.skipReportGen>true</msdemo.skipReportGen>
         <springboot.version>1.5.1.RELEASE</springboot.version>
         <swagger.version>2.7.0</swagger.version>
+        <jmockit.version>1.30</jmockit.version>
     </properties>
 
     <parent>
@@ -83,7 +84,35 @@
 
         </dependencies>
     </dependencyManagement>
+    <dependencies>
 
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>javax.servlet-api</artifactId>
+            <version>3.0.1</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.jmockit</groupId>
+            <artifactId>jmockit</artifactId>
+            <version>${jmockit.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.assertj</groupId>
+            <artifactId>assertj-core</artifactId>
+            <version>3.8.0</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
     <build>
         <plugins>
             <plugin>
@@ -94,6 +123,25 @@
                     <source>1.8</source>
                     <target>1.8</target>
                 </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+
+                <configuration>
+
+                    <systemPropertyVariables>
+                        <coverage-output>serial</coverage-output>
+                        <coverage-outputDir>${project.basedir}/target/coverage-data/</coverage-outputDir>
+                        <coverage-metrics>line</coverage-metrics>
+                        <coverage-srcDirs>${project.basedir}/src/main/java</coverage-srcDirs>
+                        <coverage-classes>org.ckr.msdemo.*</coverage-classes>
+                    </systemPropertyVariables>
+
+                </configuration>
+
+
             </plugin>
 
             <plugin>
@@ -145,10 +193,13 @@
                 </configuration>
             </plugin>
 
+
+
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-antrun-plugin</artifactId>
                 <version>1.8</version>
+
                 <executions>
 
                     <execution>
@@ -163,12 +214,16 @@
                                         <include name="/*/target/classes/**/*"/>
                                     </fileset>
                                 </copy>
+
                             </target>
                         </configuration>
                         <goals>
                             <goal>run</goal>
                         </goals>
                     </execution>
+
+
+
                 </executions>
             </plugin>
 
