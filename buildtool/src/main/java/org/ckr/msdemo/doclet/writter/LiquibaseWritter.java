@@ -190,8 +190,20 @@ public class LiquibaseWritter {
 
     private void writeColumnContent(Column column, OutputStreamWriter writter) throws IOException {
 
-        writter.write(indent(3)
-                + "<column name=\"" + column.getName() + "\" type=\"" + getColumnType(column) + "\"/>" + ENTER);
+        if(Boolean.TRUE.equals(column.getIsPrimaryKey())) {
+
+            writter.write(indent(3)
+                    + "<column name=\"" + column.getName() + "\" type=\"" + getColumnType(column) + "\">" + ENTER);
+
+            writter.write(indent(4) + "<constraints nullable=\"false\"/>" + ENTER);
+
+            writter.write(indent(3)
+                    + "</column>" + ENTER);
+
+        } else {
+            writter.write(indent(3)
+                    + "<column name=\"" + column.getName() + "\" type=\"" + getColumnType(column) + "\"/>" + ENTER);
+        }
 
     }
 
@@ -235,14 +247,31 @@ public class LiquibaseWritter {
 
     private void writeInsertTableContent(Table table, OutputStreamWriter writter) throws IOException {
 
+        StringBuilder pkStr = new StringBuilder();
+
+        for(Column column : table.getColumnList()) {
+            if(Boolean.TRUE.equals(column.getIsPrimaryKey())) {
+
+                if(pkStr.length() > 0) {
+                    pkStr.append(",");
+                }
+
+                pkStr.append(column.getName());
+            }
+        }
+
         writeChangeSet(writter,"insertTable-" + table.getPackageName() + "." + table.getTableName());
         writter.write(ENTER);
 
         writter.write(indent(2) + "<loadUpdateData file=\""
                 + table.getPackageName().replace('.', '/') + "/"
                 + table.getTableName() + ".csv" + "\"" + ENTER);
-        writter.write(indent(2) + "                primaryKey=\""
-                + "PK_" + table.getTableName() +"\"" + ENTER);
+
+        if(pkStr.length() > 0) {
+            writter.write(indent(2) + "                primaryKey=\""
+                    + pkStr.toString() + "\"" + ENTER);
+        }
+
         writter.write(indent(2) + "                tableName=\""
                 + table.getTableName() +"\">" + ENTER);
 
