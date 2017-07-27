@@ -1,9 +1,7 @@
 package org.ckr.msdemo.doclet.model;
 
-import static org.ckr.msdemo.doclet.util.DocletUtil.findAnnotation;
 import static org.ckr.msdemo.doclet.util.DocletUtil.logMsg;
 
-import com.sun.javadoc.AnnotationDesc;
 import com.sun.javadoc.AnnotationValue;
 import com.sun.javadoc.ClassDoc;
 import org.ckr.msdemo.doclet.util.AnnotationScanTemplate;
@@ -21,7 +19,6 @@ public class Table {
     public static final String TABLE_QUALIFIED_NAME = "javax.persistence.Table";
     public static final String TABLE_NAME = "name";
     public static final String TABLE_INDEXS = "indexes";
-
 
 
     private String tableName = null;
@@ -51,7 +48,6 @@ public class Table {
     public String getTableName() {
         return tableName;
     }
-
 
 
     public List<Index> getIndexList() {
@@ -95,23 +91,21 @@ public class Table {
     }
 
 
-
     public static Table createEntity(ClassDoc classDoc) {
-
 
 
         Table instance = new Table();
 
         new AnnotationScanTemplate<Table>(classDoc, instance)
             .annotation(TABLE_QUALIFIED_NAME)
-                .attribute(TABLE_NAME, (data, annotationValue) -> data.setTableName((String)annotationValue.value()))
-                .attribute(TABLE_INDEXS, (data, annotationValue) ->
-                                          createIndexList(data, (AnnotationValue[])annotationValue.value()))
-                .parent()
+            .attribute(TABLE_NAME, (data, annotationValue) -> data.setTableName((String) annotationValue.value()))
+            .attribute(TABLE_INDEXS, (data, annotationValue) ->
+                createIndexList(data, (AnnotationValue[]) annotationValue.value()))
+            .parent()
             .scaneProgramElement();
 
 
-        if(instance.tableName == null) {
+        if (instance.tableName == null) {
             return null;
         }
 
@@ -131,16 +125,16 @@ public class Table {
 
     }
 
-    static private void createIndexList(Table dataObject, AnnotationValue[] indexAnnotationList) {
+    private static void createIndexList(Table dataObject, AnnotationValue[] indexAnnotationList) {
 
-        if(indexAnnotationList == null) {
+        if (indexAnnotationList == null) {
             return;
         }
 
-        for(AnnotationValue indexAnnotation : indexAnnotationList) {
+        for (AnnotationValue indexAnnotation : indexAnnotationList) {
             Index index = Index.createIndex(indexAnnotation);
 
-            if(index != null) {
+            if (index != null) {
                 dataObject.addIndex(index);
             }
         }
@@ -153,17 +147,16 @@ public class Table {
         result.setTableName(joinTable.getTableName());
 
 
-
         Table joinedTable = null;
 
         for (Table table : existTables) {
-            if(table.getFullClassName().equals(joinTable.getJoinFullClassName())) {
+            if (table.getFullClassName().equals(joinTable.getJoinFullClassName())) {
                 joinedTable = table;
                 break;
             }
         }
 
-        if(joinedTable == null) {
+        if (joinedTable == null) {
             throw new RuntimeException("Cannot find joined table for:" + joinTable);
         }
 
@@ -172,13 +165,13 @@ public class Table {
         Table inversedTable = null;
 
         for (Table table : existTables) {
-            if(table.getFullClassName().equals(joinTable.getInverseFullClassName())) {
+            if (table.getFullClassName().equals(joinTable.getInverseFullClassName())) {
                 inversedTable = table;
                 break;
             }
         }
 
-        if(inversedTable == null) {
+        if (inversedTable == null) {
             throw new RuntimeException("Cannot find inversed table for:" + joinTable);
         }
 
@@ -217,27 +210,39 @@ public class Table {
 
     @Override
     public String toString() {
-        return "Table{" +
-                "tableName='" + tableName + '\'' +
-                ", packageName='" + packageName + '\'' +
-                ", className='" + className + '\'' +
-                ", indexList=" + indexList +
-                ", columnList=" + columnList +
-                ", comment=" + comment +
-                '}';
+        return "Table{"
+            + "tableName='" + tableName + '\''
+            + ", packageName='" + packageName + '\''
+            + ", className='" + className + '\''
+            + ", indexList=" + indexList
+            + ", columnList=" + columnList
+            + ", comment=" + comment
+            + '}';
     }
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
 
         Table table = (Table) o;
 
-        if (tableName != null ? !tableName.equals(table.tableName) : table.tableName != null) return false;
-        if (packageName != null ? !packageName.equals(table.packageName) : table.packageName != null) return false;
-        if (indexList != null ? !indexList.equals(table.indexList) : table.indexList != null) return false;
-        if (columnList != null ? !columnList.equals(table.columnList) : table.columnList != null) return false;
+        if (tableName != null ? !tableName.equals(table.tableName) : table.tableName != null) {
+            return false;
+        }
+        if (packageName != null ? !packageName.equals(table.packageName) : table.packageName != null) {
+            return false;
+        }
+        if (indexList != null ? !indexList.equals(table.indexList) : table.indexList != null) {
+            return false;
+        }
+        if (columnList != null ? !columnList.equals(table.columnList) : table.columnList != null) {
+            return false;
+        }
         return comment != null ? comment.equals(table.comment) : table.comment == null;
     }
 

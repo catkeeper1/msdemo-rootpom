@@ -4,7 +4,6 @@ import com.sun.javadoc.AnnotationValue;
 import com.sun.javadoc.ClassDoc;
 import com.sun.javadoc.MethodDoc;
 import com.sun.javadoc.Type;
-import com.sun.javadoc.TypeVariable;
 import org.ckr.msdemo.doclet.util.AnnotationScanTemplate;
 
 import java.util.ArrayList;
@@ -94,38 +93,37 @@ public class JoinTable {
         }
 
 
-
         final Set<String> includeTableName = new HashSet<>();
 
         new AnnotationScanTemplate<Set<String>>(classDoc, includeTableName)
-                .annotation(Table.TABLE_QUALIFIED_NAME)
-                .attribute(Table.TABLE_NAME, (data, annotationValue) -> data.add((String)annotationValue.value()))
-                .parent()
-                .scaneProgramElement();
+            .annotation(Table.TABLE_QUALIFIED_NAME)
+            .attribute(Table.TABLE_NAME, (data, annotationValue) -> data.add((String) annotationValue.value()))
+            .parent()
+            .scaneProgramElement();
 
-        if(includeTableName.isEmpty()) {
+        if (includeTableName.isEmpty()) {
             return result;
         }
 
         MethodDoc[] methods = classDoc.methods();
 
-        for(MethodDoc method : methods) {
+        for (MethodDoc method : methods) {
 
             JoinTable instance = new JoinTable();
 
             new AnnotationScanTemplate<JoinTable>(method, instance)
-                    .annotation(JOINTABLE_QUALIFIED_NAME)
-                    .attribute(JOINTABLE_NAME,
-                            (data, annotationValue) ->
-                                    data.setTableName((String) annotationValue.value()))
-                    .attribute(JOINTABLE_JOINCOLUMNS,
-                            (data, annotationValue) ->
-                                    createJoinColumnList(data, (AnnotationValue[]) annotationValue.value()))
-                    .attribute(JOINTABLE_INVERSECOLUMNS,
-                            (data, annotationValue) ->
-                                    createInverseColumnList(data, (AnnotationValue[]) annotationValue.value()))
-                    .parent()
-                    .scaneProgramElement();
+                .annotation(JOINTABLE_QUALIFIED_NAME)
+                .attribute(JOINTABLE_NAME,
+                    (data, annotationValue) ->
+                        data.setTableName((String) annotationValue.value()))
+                .attribute(JOINTABLE_JOINCOLUMNS,
+                    (data, annotationValue) ->
+                        createJoinColumnList(data, (AnnotationValue[]) annotationValue.value()))
+                .attribute(JOINTABLE_INVERSECOLUMNS,
+                    (data, annotationValue) ->
+                        createInverseColumnList(data, (AnnotationValue[]) annotationValue.value()))
+                .parent()
+                .scaneProgramElement();
 
             if (instance.getTableName() == null) {
                 continue;
@@ -140,7 +138,7 @@ public class JoinTable {
 
             } else if (method.name().startsWith("set")) {
 
-                if(method.parameters() != null && method.parameters().length > 0) {
+                if (method.parameters() != null && method.parameters().length > 0) {
                     inverseType = getParameterTypeName(method.parameters()[0].type());
                 }
 
@@ -148,15 +146,15 @@ public class JoinTable {
 
             if (inverseType == null) {
                 throw new RuntimeException("cannot get join class type. method is "
-                        + method.qualifiedName()
-                        + ".class name is " + classDoc.qualifiedName());
+                    + method.qualifiedName()
+                    + ".class name is " + classDoc.qualifiedName());
             }
 
             instance.setInverseFullClassName(inverseType);
 
             result.add(instance);
         }
-        return  result;
+        return result;
     }
 
     static private String getParameterTypeName(Type type) {
@@ -177,14 +175,14 @@ public class JoinTable {
 
     static private void createJoinColumnList(JoinTable dataObject, AnnotationValue[] columnAnnotationList) {
 
-        if(columnAnnotationList == null) {
+        if (columnAnnotationList == null) {
             return;
         }
 
-        for(AnnotationValue columnAnnotation : columnAnnotationList) {
+        for (AnnotationValue columnAnnotation : columnAnnotationList) {
             Column column = Column.createJoinTableColumn(columnAnnotation);
 
-            if(column != null) {
+            if (column != null) {
                 dataObject.joinColumnList.add(column);
             }
         }
@@ -193,14 +191,14 @@ public class JoinTable {
 
     static private void createInverseColumnList(JoinTable dataObject, AnnotationValue[] columnAnnotationList) {
 
-        if(columnAnnotationList == null) {
+        if (columnAnnotationList == null) {
             return;
         }
 
-        for(AnnotationValue columnAnnotation : columnAnnotationList) {
+        for (AnnotationValue columnAnnotation : columnAnnotationList) {
             Column column = Column.createJoinTableColumn(columnAnnotation);
 
-            if(column != null) {
+            if (column != null) {
                 dataObject.inverseColumnList.add(column);
             }
         }
@@ -209,13 +207,13 @@ public class JoinTable {
 
     @Override
     public String toString() {
-        return "JoinTable{" +
-                "tableName='" + tableName + '\'' +
-                ", joinFullClassName='" + joinFullClassName + '\'' +
-                ", inverseFullClassName='" + inverseFullClassName + '\'' +
-                ", indexList=" + indexList +
-                ", joinColumnList=" + joinColumnList +
-                ", inverseColumnList=" + inverseColumnList +
-                '}';
+        return "JoinTable{"
+            + "tableName='" + tableName + '\''
+            + ", joinFullClassName='" + joinFullClassName + '\''
+            + ", inverseFullClassName='" + inverseFullClassName + '\''
+            + ", indexList=" + indexList
+            + ", joinColumnList=" + joinColumnList
+            + ", inverseColumnList=" + inverseColumnList
+            + '}';
     }
 }

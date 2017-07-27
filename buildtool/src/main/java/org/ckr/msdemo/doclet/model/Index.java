@@ -24,6 +24,33 @@ public class Index {
 
     private Boolean unique = null;
 
+    private Index() {
+    }
+
+    public static Index createIndex(AnnotationValue indexAnnotation) {
+
+        Index result = new Index();
+
+        AnnotationScanTemplate.BasicAnnotationHandler<Index> annotationHandler =
+            new AnnotationScanTemplate.BasicAnnotationHandler<Index>();
+
+
+        annotationHandler
+            .attribute(INDEX_NAME,
+                (data, annotationValue) -> data.setName((String) annotationValue.value()))
+            .attribute(INDEX_COLUMN_LIST,
+                (data, annotationValue) -> data.addColumn((String) annotationValue.value()))
+            .attribute(INDEX_UNIQUE,
+                (data, annotationValue) -> data.setUnique((Boolean) annotationValue.value()))
+            .handle(result, (AnnotationDesc) indexAnnotation.value());
+
+        if (result.getName() != null) {
+            return result;
+        }
+
+        return null;
+    }
+
     public String getName() {
         return name;
     }
@@ -44,39 +71,11 @@ public class Index {
         return columnList;
     }
 
-
-    private Index() {
-    }
-
-    public static Index createIndex(AnnotationValue indexAnnotation) {
-
-        Index result = new Index();
-
-        AnnotationScanTemplate.BasicAnnotationHandler<Index> annotationHandler =
-                new AnnotationScanTemplate.BasicAnnotationHandler<Index>();
-
-
-        annotationHandler
-                .attribute(INDEX_NAME,
-                           (data, annotationValue) -> data.setName((String)annotationValue.value()))
-                .attribute(INDEX_COLUMN_LIST,
-                           (data, annotationValue) -> data.addColumn((String)annotationValue.value()))
-                .attribute(INDEX_UNIQUE,
-                           (data, annotationValue) -> data.setUnique((Boolean)annotationValue.value()))
-                .handle(result, (AnnotationDesc) indexAnnotation.value());
-
-        if(result.getName() != null) {
-            return result;
-        }
-
-        return null;
-    }
-
     private void addColumn(String columnListValue) {
 
         StringTokenizer columnListTokenizer = new StringTokenizer(columnListValue, ",");
 
-        while(columnListTokenizer.hasMoreTokens()) {
+        while (columnListTokenizer.hasMoreTokens()) {
             String columnValue = columnListTokenizer.nextToken();
 
             IndexColumn indexColumn = new IndexColumn();
@@ -85,7 +84,7 @@ public class Index {
 
             indexColumn.setName(columnTokenizer.nextToken());
 
-            if(columnTokenizer.hasMoreTokens()) {
+            if (columnTokenizer.hasMoreTokens()) {
                 indexColumn.setOrder(columnTokenizer.nextToken());
             }
             this.columnList.add(indexColumn);
@@ -96,11 +95,39 @@ public class Index {
 
     @Override
     public String toString() {
-        return "Index{" +
-                "name='" + name + '\'' +
-                ", columnList=" + columnList +
-                ", unique=" + unique +
-                '}';
+        return "Index{"
+            + "name='" + name + '\''
+            + ", columnList=" + columnList
+            + ", unique=" + unique
+            + '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+
+        Index index = (Index) o;
+
+        if (name != null ? !name.equals(index.name) : index.name != null) {
+            return false;
+        }
+        if (columnList != null ? !columnList.equals(index.columnList) : index.columnList != null) {
+            return false;
+        }
+        return unique != null ? unique.equals(index.unique) : index.unique == null;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = name != null ? name.hashCode() : 0;
+        result = 31 * result + (columnList != null ? columnList.hashCode() : 0);
+        result = 31 * result + (unique != null ? unique.hashCode() : 0);
+        return result;
     }
 
     public static class IndexColumn {
@@ -127,30 +154,10 @@ public class Index {
 
         @Override
         public String toString() {
-            return "IndexColumn{" +
-                    "name='" + name + '\'' +
-                    ", order='" + order + '\'' +
-                    '}';
+            return "IndexColumn{"
+                + "name='" + name + '\''
+                + ", order='" + order + '\''
+                + '}';
         }
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        Index index = (Index) o;
-
-        if (name != null ? !name.equals(index.name) : index.name != null) return false;
-        if (columnList != null ? !columnList.equals(index.columnList) : index.columnList != null) return false;
-        return unique != null ? unique.equals(index.unique) : index.unique == null;
-    }
-
-    @Override
-    public int hashCode() {
-        int result = name != null ? name.hashCode() : 0;
-        result = 31 * result + (columnList != null ? columnList.hashCode() : 0);
-        result = 31 * result + (unique != null ? unique.hashCode() : 0);
-        return result;
     }
 }

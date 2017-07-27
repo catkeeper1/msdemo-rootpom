@@ -1,5 +1,11 @@
 package org.ckr.msdemo.doclet.writter;
 
+import static org.ckr.msdemo.doclet.util.DocletUtil.ENTER;
+import static org.ckr.msdemo.doclet.util.DocletUtil.getColumnType;
+import static org.ckr.msdemo.doclet.util.DocletUtil.indent;
+import static org.ckr.msdemo.doclet.util.DocletUtil.logMsg;
+import static org.ckr.msdemo.doclet.util.DocletUtil.writeChangeSet;
+
 import org.ckr.msdemo.doclet.model.Column;
 import org.ckr.msdemo.doclet.model.DataModel;
 import org.ckr.msdemo.doclet.model.Index;
@@ -7,17 +13,10 @@ import org.ckr.msdemo.doclet.model.Table;
 import org.ckr.msdemo.doclet.util.DocletUtil;
 
 import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
-import java.math.BigDecimal;
 import java.util.Date;
 
-import static org.ckr.msdemo.doclet.util.DocletUtil.indent;
-import static org.ckr.msdemo.doclet.util.DocletUtil.ENTER;
-import static org.ckr.msdemo.doclet.util.DocletUtil.logMsg;
-import static org.ckr.msdemo.doclet.util.DocletUtil.writeChangeSet;
-import static org.ckr.msdemo.doclet.util.DocletUtil.getColumnType;
 
 /**
  * Created by Administrator on 2017/6/20.
@@ -36,14 +35,14 @@ public class LiquibaseWritter {
     protected void createBaseDir(String baseDirPath) {
         File dir = new File(baseDirPath);
 
-        if(!dir.isDirectory()) {
+        if (!dir.isDirectory()) {
             throw new RuntimeException(dir.getAbsolutePath() + " is not a valid dir.");
         }
 
         dir = new File(dir, "liquibaseXml");
 
-        if(!dir.exists()) {
-            if(!dir.mkdir()) {
+        if (!dir.exists()) {
+            if (!dir.mkdir()) {
                 throw new RuntimeException("cannot create directory:" + dir.getAbsolutePath());
             }
         }
@@ -55,12 +54,12 @@ public class LiquibaseWritter {
 
 
         File result = DocletUtil.createDirectory(this.baseDir,
-                                                 table.getPackageName().replace(".", "/"));
+            table.getPackageName().replace(".", "/"));
 
 
         result = new File(result, fileName);
 
-        if(!result.exists()) {
+        if (!result.exists()) {
             try {
                 result.createNewFile();
             } catch (IOException e) {
@@ -72,7 +71,7 @@ public class LiquibaseWritter {
     }
 
     public void generateDdlXmlConfigDoc() {
-        for(Table table : dataModel.getTableList()) {
+        for (Table table : dataModel.getTableList()) {
 
             File docFile = createDocFile(table, "db.changelog.create_" + table.getTableName() + ".xml");
 
@@ -104,13 +103,13 @@ public class LiquibaseWritter {
     }
 
     private void writeTableContent(Table table, OutputStreamWriter writter) throws IOException {
-        writeChangeSet(writter,"createTable-" + table.getPackageName() + "." + table.getTableName());
+        writeChangeSet(writter, "createTable-" + table.getPackageName() + "." + table.getTableName());
         writter.write(ENTER);
 
         writter.write(indent(2) + "<createTable tableName=\""
-                + table.getTableName() + "\">" + ENTER);
+            + table.getTableName() + "\">" + ENTER);
 
-        for(Column column : table.getColumnList()) {
+        for (Column column : table.getColumnList()) {
             this.writeColumnContent(column, writter);
         }
 
@@ -121,9 +120,9 @@ public class LiquibaseWritter {
     private void writePrimaryContent(Table table, OutputStreamWriter writter) throws IOException {
         StringBuilder fieldNames = new StringBuilder("");
         for (Column column : table.getColumnList()) {
-            if(Boolean.TRUE.equals(column.getIsPrimaryKey())) {
+            if (Boolean.TRUE.equals(column.getIsPrimaryKey())) {
 
-                if(fieldNames.length() > 0) {
+                if (fieldNames.length() > 0) {
                     fieldNames.append(",");
                 }
 
@@ -136,24 +135,24 @@ public class LiquibaseWritter {
             return;
         }
 
-        writeChangeSet(writter,"createTablePk-" + table.getPackageName() + "." + table.getTableName());
+        writeChangeSet(writter, "createTablePk-" + table.getPackageName() + "." + table.getTableName());
         writter.write(ENTER);
 
         writter.write(indent(2) + "<addPrimaryKey "
-                + "constraintName=\"" + "PK_" + table.getTableName() + "\" "
-                + "columnNames=\"" + fieldNames.toString() + "\" "
-                + "tableName=\"" + table.getTableName() + "\" />" + ENTER);
+            + "constraintName=\"" + "PK_" + table.getTableName() + "\" "
+            + "columnNames=\"" + fieldNames.toString() + "\" "
+            + "tableName=\"" + table.getTableName() + "\" />" + ENTER);
 
         writter.write(DocletUtil.CHANGE_SET_END);
     }
 
     private void writeIndexContent(Table table, OutputStreamWriter writter) throws IOException {
 
-        if(table.getIndexList().isEmpty()) {
+        if (table.getIndexList().isEmpty()) {
             return;
         }
 
-        writeChangeSet(writter,"createTableIndex-" + table.getPackageName() + "." + table.getTableName());
+        writeChangeSet(writter, "createTableIndex-" + table.getPackageName() + "." + table.getTableName());
 
         int noOfIndex = 0;
 
@@ -171,11 +170,11 @@ public class LiquibaseWritter {
             }
 
             writter.write(indent(2) + "<createIndex "
-                    + "indexName=\"" + indexName + "\" "
-                    + "tableName=\"" + table.getTableName() + "\" "
-                    + "unique=\"" + unique + "\">" + ENTER);
+                + "indexName=\"" + indexName + "\" "
+                + "tableName=\"" + table.getTableName() + "\" "
+                + "unique=\"" + unique + "\">" + ENTER);
 
-            for(Index.IndexColumn indexColumn : index.getColumnList()) {
+            for (Index.IndexColumn indexColumn : index.getColumnList()) {
 
                 writter.write(indent(3) + "<column name=\"" + indexColumn.getName() + "\"/>" + ENTER);
 
@@ -191,12 +190,12 @@ public class LiquibaseWritter {
     private void writeColumnContent(Column column, OutputStreamWriter writter) throws IOException {
 
         writter.write(indent(3)
-                + "<column name=\"" + column.getName() + "\" type=\"" + getColumnType(column) + "\"/>" + ENTER);
+            + "<column name=\"" + column.getName() + "\" type=\"" + getColumnType(column) + "\"/>" + ENTER);
 
     }
 
     private String getPrimaryKeyAttribute(Column column) {
-        if(Boolean.TRUE.equals(column.getIsPrimaryKey())) {
+        if (Boolean.TRUE.equals(column.getIsPrimaryKey())) {
             return "primaryKey=true";
         }
 
@@ -205,7 +204,7 @@ public class LiquibaseWritter {
 
 
     public void generateInsertXmlConfigDoc() {
-        for(Table table : dataModel.getTableList()) {
+        for (Table table : dataModel.getTableList()) {
 
             File docFile = createDocFile(table, "db.changelog.insert_" + table.getTableName() + ".xml");
 
@@ -235,19 +234,19 @@ public class LiquibaseWritter {
 
     private void writeInsertTableContent(Table table, OutputStreamWriter writter) throws IOException {
 
-        writeChangeSet(writter,"insertTable-" + table.getPackageName() + "." + table.getTableName());
+        writeChangeSet(writter, "insertTable-" + table.getPackageName() + "." + table.getTableName());
         writter.write(ENTER);
 
         writter.write(indent(2) + "<loadUpdateData file=\""
-                + table.getPackageName().replace('.', '/') + "/"
-                + table.getTableName() + ".csv" + "\"" + ENTER);
+            + table.getPackageName().replace('.', '/') + "/"
+            + table.getTableName() + ".csv" + "\"" + ENTER);
         writter.write(indent(2) + "                primaryKey=\""
-                + "PK_" + table.getTableName() +"\"" + ENTER);
+            + "PK_" + table.getTableName() + "\"" + ENTER);
         writter.write(indent(2) + "                tableName=\""
-                + table.getTableName() +"\">" + ENTER);
+            + table.getTableName() + "\">" + ENTER);
 
 
-        for(Column column : table.getColumnList()) {
+        for (Column column : table.getColumnList()) {
             this.writeInsertColumnContent(column, writter);
         }
 
@@ -277,18 +276,18 @@ public class LiquibaseWritter {
             columnType = "BOOLEAN";
         }
 
-        if(columnType == null) {
+        if (columnType == null) {
             return;
         }
 
         writter.write(indent(3)
-                + "<column name=\"" + column.getName() + "\" type=\"" + columnType + "\"/>" + ENTER);
+            + "<column name=\"" + column.getName() + "\" type=\"" + columnType + "\"/>" + ENTER);
 
     }
 
 
     public void generateInsertCsvTemplate() {
-        for(Table table : dataModel.getTableList()) {
+        for (Table table : dataModel.getTableList()) {
 
             File docFile = createDocFile(table, table.getTableName() + ".csv");
 
@@ -311,7 +310,7 @@ public class LiquibaseWritter {
         for (int i = 0; i < table.getColumnList().size(); i++) {
             Column column = table.getColumnList().get(i);
 
-            if(i > 0) {
+            if (i > 0) {
                 writer.write(",");
             }
             writer.write(column.getName());
@@ -322,7 +321,7 @@ public class LiquibaseWritter {
     }
 
     public void generateIncludeXmlConfig() {
-        for(Table table : dataModel.getTableList()) {
+        for (Table table : dataModel.getTableList()) {
 
             File docFile = createDocFile(table, "db.changelog." + table.getTableName() + ".xml");
 
@@ -345,15 +344,14 @@ public class LiquibaseWritter {
         writter.write(DocletUtil.DOC_HEADER);
 
         writter.write(indent(1) + "<include file=\""
-                + table.getPackageName().replace(".", "/") + "/"
-                + "db.changelog.create_" + table.getTableName() + ".xml\"/>" + ENTER);
+            + table.getPackageName().replace(".", "/") + "/"
+            + "db.changelog.create_" + table.getTableName() + ".xml\"/>" + ENTER);
 
         writter.write(indent(1) + "<include file=\""
-                + table.getPackageName().replace(".", "/") + "/"
-                + "db.changelog.insert_" + table.getTableName() + ".xml\"/>" + ENTER);
+            + table.getPackageName().replace(".", "/") + "/"
+            + "db.changelog.insert_" + table.getTableName() + ".xml\"/>" + ENTER);
 
         writter.write(DocletUtil.DOC_END);
-
 
 
     }

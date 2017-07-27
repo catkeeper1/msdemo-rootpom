@@ -144,35 +144,34 @@ public class Column {
 
         MethodDoc[] methods = classDoc.methods();
 
-        if(methods == null) {
+        if (methods == null) {
             return result;
         }
 
-        for(MethodDoc method : methods) {
+        for (MethodDoc method : methods) {
 
             Column column = new Column();
 
 
             new AnnotationScanTemplate<Column>(method, column)
                 .annotation(COLUMN_QUALIFIED_NAME)
-                    .attribute(COLUMN_NAME, (data, annotationValue) -> data.setName((String)annotationValue.value()))
-                    .attribute(COLUMN_NULLABLE,
-                            (data, annotationValue) -> data.setNullable((Boolean)annotationValue.value()))
-                    .attribute(COLUMN_DEFINITION,
-                            (data, annotationValue) -> data.setColumnDefinition((String)annotationValue.value()))
-                    .attribute(COLUMN_LENGTH,
-                            (data, annotationValue) -> data.setLength((Integer) annotationValue.value()))
-                    .attribute(COLUMN_PRECISION, (data, annotationValue) ->
-                            data.setPrecision((Integer) annotationValue.value()))
-                    .attribute(COLUMN_SCALE, (data, annotationValue) ->
-                            data.setScale((Integer) annotationValue.value()))
-                    .parent()
+                .attribute(COLUMN_NAME, (data, annotationValue) -> data.setName((String) annotationValue.value()))
+                .attribute(COLUMN_NULLABLE,
+                    (data, annotationValue) -> data.setNullable((Boolean) annotationValue.value()))
+                .attribute(COLUMN_DEFINITION,
+                    (data, annotationValue) -> data.setColumnDefinition((String) annotationValue.value()))
+                .attribute(COLUMN_LENGTH,
+                    (data, annotationValue) -> data.setLength((Integer) annotationValue.value()))
+                .attribute(COLUMN_PRECISION, (data, annotationValue) ->
+                    data.setPrecision((Integer) annotationValue.value()))
+                .attribute(COLUMN_SCALE, (data, annotationValue) ->
+                    data.setScale((Integer) annotationValue.value()))
+                .parent()
                 .annotation(COLUMN_ID_QUALIFIED_NAME, (data, annotationValue) -> data.setIsPrimaryKey(true)).parent()
                 .scaneProgramElement();
 
 
-
-            if(column.getName() == null) {
+            if (column.getName() == null) {
                 continue;
             }
 
@@ -183,7 +182,7 @@ public class Column {
             result.add(column);
         }
 
-        if(result.size() > 0 && classDoc.superclass() != null) {
+        if (result.size() > 0 && classDoc.superclass() != null) {
 
             List<Column> superClassResult = createColumns(classDoc.superclass());
 
@@ -198,15 +197,15 @@ public class Column {
         Column result = new Column();
 
         AnnotationScanTemplate.BasicAnnotationHandler<Column> annotationHandler =
-                new AnnotationScanTemplate.BasicAnnotationHandler<>();
+            new AnnotationScanTemplate.BasicAnnotationHandler<>();
 
 
         annotationHandler
-                .attribute(JOIN_TABLE_COLUMN_NAME,
-                        (data, annotationValue) -> data.setName((String)annotationValue.value()))
-                .handle(result, (AnnotationDesc) indexAnnotation.value());
+            .attribute(JOIN_TABLE_COLUMN_NAME,
+                (data, annotationValue) -> data.setName((String) annotationValue.value()))
+            .handle(result, (AnnotationDesc) indexAnnotation.value());
 
-        if(result.getName() != null) {
+        if (result.getName() != null) {
             return result;
         }
 
@@ -215,40 +214,59 @@ public class Column {
 
     @Override
     public String toString() {
-        return "Column{" +
-                "name='" + name + '\'' +
-                ", nullable=" + nullable +
-                ", isPrimaryKey=" + isPrimaryKey +
-                ", columnDefinition='" + columnDefinition + '\'' +
-                ", length=" + length +
-                ", precision=" + precision +
-                ", scale=" + scale +
-                ", javaFieldName='" + javaFieldName + '\'' +
-                ", javaFieldType=" + javaFieldType +
-                ", comment=" + comment +
-                '}';
+        return "Column{"
+            + "name='" + name + '\''
+            + ", nullable=" + nullable
+            + ", isPrimaryKey=" + isPrimaryKey
+            + ", columnDefinition='" + columnDefinition + '\''
+            + ", length=" + length
+            + ", precision=" + precision
+            + ", scale=" + scale
+            + ", javaFieldName='" + javaFieldName + '\''
+            + ", javaFieldType=" + javaFieldType
+            + ", comment=" + comment
+            + '}';
     }
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
 
         Column column = (Column) o;
 
-        if (name != null ? !name.equals(column.name) : column.name != null) return false;
-        if (nullable != null ? !nullable.equals(column.nullable) : column.nullable != null) return false;
-        if (isPrimaryKey != null ? !isPrimaryKey.equals(column.isPrimaryKey) : column.isPrimaryKey != null)
+        if (name != null ? !name.equals(column.name) : column.name != null) {
             return false;
-        if (columnDefinition != null ? !columnDefinition.equals(column.columnDefinition) : column.columnDefinition != null)
+        }
+        if (nullable != null ? !nullable.equals(column.nullable) : column.nullable != null) {
             return false;
-        if (length != null ? !length.equals(column.length) : column.length != null) return false;
-        if (precision != null ? !precision.equals(column.precision) : column.precision != null) return false;
-        if (scale != null ? !scale.equals(column.scale) : column.scale != null) return false;
-        if (javaFieldName != null ? !javaFieldName.equals(column.javaFieldName) : column.javaFieldName != null)
+        }
+        if (isPrimaryKey != null ? !isPrimaryKey.equals(column.isPrimaryKey) : column.isPrimaryKey != null) {
             return false;
-        if (javaFieldType != null ? !javaFieldType.equals(column.javaFieldType) : column.javaFieldType != null)
+        }
+        if (columnDefinition != null ? !columnDefinition.equals(column.columnDefinition)
+            : column.columnDefinition != null) {
             return false;
+        }
+        if (length != null ? !length.equals(column.length) : column.length != null) {
+            return false;
+        }
+        if (precision != null ? !precision.equals(column.precision) : column.precision != null) {
+            return false;
+        }
+        if (scale != null ? !scale.equals(column.scale) : column.scale != null) {
+            return false;
+        }
+        if (javaFieldName != null ? !javaFieldName.equals(column.javaFieldName) : column.javaFieldName != null) {
+            return false;
+        }
+        if (javaFieldType != null ? !javaFieldType.equals(column.javaFieldType) : column.javaFieldType != null) {
+            return false;
+        }
         return comment != null ? comment.equals(column.comment) : column.comment == null;
     }
 
