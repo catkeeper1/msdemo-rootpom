@@ -20,6 +20,7 @@
         <springboot.version>1.5.2.RELEASE</springboot.version>
         <swagger.version>2.7.0</swagger.version>
         <jmockit.version>1.33</jmockit.version>
+        <exec-maven-plugin.version>1.6.0</exec-maven-plugin.version>
     </properties>
 
     <parent>
