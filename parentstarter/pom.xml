@@ -298,6 +298,29 @@
 
             </plugin>
 
+            <plugin>
+                <groupId>ch.ifocusit.livingdoc</groupId>
+                <artifactId>livingdoc-maven-plugin</artifactId>
+                <version>1.2</version>
+                <!--<executions>-->
+                    <!--<execution>-->
+                        <!--<id>class-diagram</id>-->
+                        <!--<phase>package</phase>-->
+                        <!--<goals>-->
+                            <!--<goal>diagram</goal>-->
+                            <!--<goal>glossary</goal>-->
+                        <!--</goals>-->
+                    <!--</execution>-->
+                <!--</executions>-->
+                <configuration>
+                    <packageRoot>org.ckr.msdemo.adminservice</packageRoot>
+                    <interactive>true</interactive>
+                    <!--<excludes>-->
+                    <!--<exclude>.*domain.common.*</exclude>-->
+                    <!--</excludes>-->
+                </configuration>
+            </plugin>
+
         </plugins>
 
         <!--<extensions>-->
