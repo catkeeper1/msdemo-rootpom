@@ -29,7 +29,7 @@ public abstract class FileWritterTemplate {
         } catch (IOException ioExp) {
             throw new RuntimeException(ioExp);
         } finally {
-            if(docWriter != null) {
+            if (docWriter != null) {
                 try {
                     docWriter.close();
                 } catch (IOException e) {
