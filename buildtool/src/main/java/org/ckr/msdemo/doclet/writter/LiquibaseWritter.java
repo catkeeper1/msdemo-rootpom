@@ -260,7 +260,13 @@ public class LiquibaseWritter {
             }
         }
 
-        writeChangeSet(writter,"insertTable-" + table.getPackageName() + "." + table.getTableName());
+        writeChangeSet(writter,
+                "insertTable-"
+                        + table.getPackageName()
+                        + "." + table.getTableName()
+                        , "!UT" );
+
+
         writter.write(ENTER);
 
         writter.write(indent(2) + "<loadUpdateData file=\""

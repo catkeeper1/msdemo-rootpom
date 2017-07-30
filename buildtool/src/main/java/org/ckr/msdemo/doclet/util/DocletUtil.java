@@ -38,8 +38,13 @@ public class DocletUtil {
     public static final String DOC_END = "</databaseChangeLog>";
 
     public static void writeChangeSet(OutputStreamWriter writter, String changeId) throws IOException {
-        writter.write(indent(1) + "<changeSet author=\"liquibase-docs\" id=\"" +
-                changeId +"\">" + ENTER);
+        writter.write(indent(1) + "<changeSet author=\"liquibase-docs\" id=\""
+                + changeId + "\">" + ENTER);
+    }
+
+    public static void writeChangeSet(OutputStreamWriter writter, String changeId, String context) throws IOException {
+        writter.write(indent(1) + "<changeSet author=\"liquibase-docs\" id=\""
+                + changeId + "\" context=\"" + context + "\">" + ENTER);
     }
 
     public static final String CHANGE_SET_END = indent(1) + "</changeSet>" + ENTER;
