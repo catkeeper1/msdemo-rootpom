@@ -18,7 +18,7 @@ import java.util.List;
 import java.util.StringTokenizer;
 
 /**
- * Created by Administrator on 2017/6/13.
+ * Utility that contains meta statements and useful methods.
  */
 public class DocletUtil {
 
@@ -41,7 +41,7 @@ public class DocletUtil {
 
     public static void writeChangeSet(OutputStreamWriter writter, String changeId, String context) throws IOException {
         writter.write(indent(1) + "<changeSet author=\"liquibase-docs\" id=\""
-                + changeId + "\" context=\"" + context + "\">" + ENTER);
+            + changeId + "\" context=\"" + context + "\">" + ENTER);
     }
 
     public static final String CHANGE_SET_END = indent(1) + "</changeSet>" + ENTER;
@@ -129,6 +129,12 @@ public class DocletUtil {
 
     }
 
+    /**
+     * Get class name from the full qualified name of class.
+     *
+     * @param classDoc classDoc
+     * @return class name
+     */
     public static String getPackageName(ClassDoc classDoc) {
 
         if (!classDoc.qualifiedTypeName().contains(".")) {
@@ -139,6 +145,12 @@ public class DocletUtil {
 
     }
 
+    /**
+     * Get field name from the getter/setter method name.
+     *
+     * @param method MethodDoc
+     * @return field name
+     */
     public static String getMethodName(MethodDoc method) {
         String name = method.name();
 
@@ -161,6 +173,13 @@ public class DocletUtil {
         return System.getProperty("output");
     }
 
+    /**
+     * Create Directories at baseDir followed by the hierarchy of path separated by period.
+     *
+     * @param baseDir baseDir
+     * @param path    path
+     * @return baseDir
+     */
     public static File createDirectory(File baseDir, String path) {
 
         File result = baseDir;
@@ -180,6 +199,12 @@ public class DocletUtil {
 
     }
 
+    /**
+     * Get a string of blank spaces specify by noOfIndent.
+     *
+     * @param noOfIndent noOfIndent
+     * @return string of blank spaces
+     */
     public static String indent(int noOfIndent) {
         StringBuilder result = new StringBuilder("");
         for (int i = 0; i < noOfIndent; i++) {
@@ -188,6 +213,12 @@ public class DocletUtil {
         return result.toString();
     }
 
+    /**
+     * Get fully qualified name of the Column type.
+     *
+     * @param column Column
+     * @return ColumnType
+     */
     public static String getColumnType(Column column) {
         String result = "";
 

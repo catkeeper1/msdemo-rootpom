@@ -20,13 +20,13 @@ import java.util.Date;
 /**
  * Created by Administrator on 2017/6/20.
  */
-public class LiquibaseWritter {
+public class LiquibaseWriter {
 
     private File baseDir;
 
     private DataModel dataModel;
 
-    public LiquibaseWritter(String baseDirPath, DataModel dataModel) {
+    public LiquibaseWriter(String baseDirPath, DataModel dataModel) {
         createBaseDir(baseDirPath);
         this.dataModel = dataModel;
     }
@@ -68,13 +68,16 @@ public class LiquibaseWritter {
         }
         return result;
     }
-
+    /**
+     * Generate Ddl statement of Liquibase for tables
+     * <pre><include file="org/ckr/msdemo/adminservice/entity/db.changelog.create_USER.xml"/></pre>
+     */
     public void generateDdlXmlConfigDoc() {
         for (Table table : dataModel.getTableList()) {
 
             File docFile = createDocFile(table, "db.changelog.create_" + table.getTableName() + ".xml");
 
-            final LiquibaseWritter t = this;
+            final LiquibaseWriter t = this;
 
             new FileWritterTemplate(docFile) {
 
@@ -219,7 +222,7 @@ public class LiquibaseWritter {
 
             File docFile = createDocFile(table, "db.changelog.insert_" + table.getTableName() + ".xml");
 
-            final LiquibaseWritter t = this;
+            final LiquibaseWriter t = this;
 
             new FileWritterTemplate(docFile) {
 
@@ -259,10 +262,10 @@ public class LiquibaseWritter {
         }
 
         writeChangeSet(writter,
-                "insertTable-"
-                        + table.getPackageName()
-                        + "." + table.getTableName()
-                        , "!UT" );
+            "insertTable-"
+                + table.getPackageName()
+                + "." + table.getTableName(),
+            "!UT");
 
 
         writter.write(ENTER);
@@ -320,12 +323,16 @@ public class LiquibaseWritter {
     }
 
 
+    /**
+     * Generate insert statement of Liquibase for tables
+     * <pre><include file="org/ckr/msdemo/adminservice/entity/db.changelog.create_USER.xml"/></pre>
+     */
     public void generateInsertCsvTemplate() {
         for (Table table : dataModel.getTableList()) {
 
             File docFile = createDocFile(table, table.getTableName() + ".csv");
 
-            final LiquibaseWritter t = this;
+            final LiquibaseWriter t = this;
 
             new FileWritterTemplate(docFile) {
 
@@ -354,12 +361,16 @@ public class LiquibaseWritter {
 
     }
 
+    /**
+     * Generate include statement of Liquibase for tables
+     * <pre><include file="org/ckr/msdemo/adminservice/entity/db.changelog.create_USER.xml"/></pre>
+     */
     public void generateIncludeXmlConfig() {
         for (Table table : dataModel.getTableList()) {
 
             File docFile = createDocFile(table, "db.changelog." + table.getTableName() + ".xml");
 
-            final LiquibaseWritter t = this;
+            final LiquibaseWriter t = this;
 
             new FileWritterTemplate(docFile) {
 

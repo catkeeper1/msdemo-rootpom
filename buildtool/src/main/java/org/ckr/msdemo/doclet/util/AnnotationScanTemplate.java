@@ -43,7 +43,7 @@ public class AnnotationScanTemplate<T> {
         return handler;
     }
 
-    public void scaneProgramElement() {
+    public void scanProgramElement() {
 
         AnnotationDesc[] anntations = programElementDoc.annotations();
 

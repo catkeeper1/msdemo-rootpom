@@ -32,8 +32,8 @@ public abstract class FileWritterTemplate {
             if (docWriter != null) {
                 try {
                     docWriter.close();
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
+                } catch (IOException ioException) {
+                    throw new RuntimeException(ioException);
                 }
             }
         }

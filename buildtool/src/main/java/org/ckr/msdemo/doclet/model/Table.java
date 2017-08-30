@@ -221,15 +221,15 @@ public class Table {
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) {
+    public boolean equals(Object object) {
+        if (this == object) {
             return true;
         }
-        if (o == null || getClass() != o.getClass()) {
+        if (object == null || getClass() != object.getClass()) {
             return false;
         }
 
-        Table table = (Table) o;
+        Table table = (Table) object;
 
         if (tableName != null ? !tableName.equals(table.tableName) : table.tableName != null) {
             return false;
