@@ -51,6 +51,13 @@ public class DocletUtil {
         System.out.println(msg);
     }
 
+    /**
+     * Find annotation with qualified name.
+     *
+     * @param classDoc      classDoc
+     * @param qualifiedName qualifiedName
+     * @return AnnotationDesc
+     */
     public static AnnotationDesc findAnnotation(ProgramElementDoc classDoc, String qualifiedName) {
 
         AnnotationDesc[] anntations = classDoc.annotations();
@@ -70,7 +77,13 @@ public class DocletUtil {
         return null;
     }
 
-
+    /**
+     * Find the annotationValue of a specific key in a annotation.
+     *
+     * @param annotation    annotation
+     * @param qualifiedName key
+     * @return AnnotationValue
+     */
     public static AnnotationValue getAnnotationAttribute(AnnotationDesc annotation, String qualifiedName) {
 
         if (annotation.elementValues() == null) {
@@ -88,23 +101,34 @@ public class DocletUtil {
         return null;
     }
 
+    /**
+     * Find the string value of a specific key in a annotation.
+     *
+     * @param annotation    annotation
+     * @param qualifiedName key
+     * @return string value
+     */
     public static String getAnnotationAttributeStringValue(AnnotationDesc annotation, String qualifiedName) {
 
         if (annotation.elementValues() == null) {
             return null;
         }
-
         for (AnnotationDesc.ElementValuePair pair : annotation.elementValues()) {
 
             if (qualifiedName.equals(pair.element().qualifiedName())) {
                 return (String) pair.value().value();
             }
-
         }
-
         return null;
     }
 
+    /**
+     * Find Methods with specific qualified name in specific class.
+     *
+     * @param classDoc      classDoc
+     * @param qualifiedName qualifiedName
+     * @return List of MethodDoc
+     */
     public static List<MethodDoc> findMethodWithAnnotation(ClassDoc classDoc, String qualifiedName) {
 
         List<MethodDoc> result = new ArrayList<MethodDoc>();

@@ -90,7 +90,12 @@ public class Table {
 
     }
 
-
+    /**
+     * Create Table according to classDoc
+     *
+     * @param classDoc classDoc
+     * @return Table
+     */
     public static Table createEntity(ClassDoc classDoc) {
 
 
@@ -102,7 +107,7 @@ public class Table {
             .attribute(TABLE_INDEXS, (data, annotationValue) ->
                 createIndexList(data, (AnnotationValue[]) annotationValue.value()))
             .parent()
-            .scaneProgramElement();
+            .scanProgramElement();
 
 
         if (instance.tableName == null) {

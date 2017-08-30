@@ -18,6 +18,11 @@ public class DataModel {
 
     private List<Table> tableList = new ArrayList<>();
 
+    /**
+     * DataModel Contractor to extract table list from annotated classes.
+     *
+     * @param classeDocs classeDocs
+     */
     public DataModel(ClassDoc[] classeDocs) {
         this.classeDocs = classeDocs;
 

@@ -174,7 +174,7 @@ public class Column {
                     data.setScale((Integer) annotationValue.value()))
                 .parent()
                 .annotation(COLUMN_ID_QUALIFIED_NAME, (data, annotationValue) -> data.setIsPrimaryKey(true)).parent()
-                .scaneProgramElement();
+                .scanProgramElement();
 
 
             if (column.getName() == null) {

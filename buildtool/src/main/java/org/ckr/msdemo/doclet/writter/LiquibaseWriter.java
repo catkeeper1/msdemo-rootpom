@@ -68,9 +68,36 @@ public class LiquibaseWriter {
         }
         return result;
     }
+
     /**
-     * Generate Ddl statement of Liquibase for tables
-     * <pre><include file="org/ckr/msdemo/adminservice/entity/db.changelog.create_USER.xml"/></pre>
+     * Generate Ddl statement of Liquibase for tables.
+     * <pre>
+     *     <code>
+     * <?xml version="1.0" encoding="UTF-8"?>
+     * <databaseChangeLog
+     *         xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+     *         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+     *         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+     *          http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+     *     <changeSet author="liquibase-docs" id="createTable-org.ckr.msdemo.adminservice.entity.MENU">
+     *
+     *         <createTable tableName="MENU">
+     *             <column name="CODE" type="java.sql.Types.VARCHAR(100)">
+     *                 <constraints nullable="false"/>
+     *             </column>
+     *             <column name="PARENT_CODE" type="java.sql.Types.VARCHAR(100)"/>
+     *             <column name="DESCRIPTION" type="java.sql.Types.VARCHAR(200)"/>
+     *             <column name="FUNCTION_POINT" type="java.sql.Types.VARCHAR(100)"/>
+     *             <column name="MODULE" type="java.sql.Types.VARCHAR(100)"/>
+     *         </createTable>
+     *     </changeSet>
+     *     <changeSet author="liquibase-docs" id="createTablePk-org.ckr.msdemo.adminservice.entity.MENU">
+     *
+     *         <addPrimaryKey constraintName="PK_MENU" columnNames="CODE" tableName="MENU" />
+     *     </changeSet>
+     * </databaseChangeLog>
+     *     </code>
+     * </pre>
      */
     public void generateDdlXmlConfigDoc() {
         for (Table table : dataModel.getTableList()) {
@@ -216,7 +243,27 @@ public class LiquibaseWriter {
         return "";
     }
 
-
+    /**
+     * Generate insert statement of Liquibase for tables.
+     * <pre>
+     *     <code>
+     * <?xml version="1.0" encoding="UTF-8"?>
+     * <databaseChangeLog
+     *         xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+     *         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+     *         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+     *          http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+     *     <changeSet author="liquibase-docs" id="insertTable-org.ckr.msdemo.adminservice.entity.MENU" context="!UT">
+     *
+     *         <loadUpdateData file="org/ckr/msdemo/adminservice/entity/MENU.csv"
+     *                         primaryKey="CODE"
+     *                         tableName="MENU">
+     *         </loadUpdateData>
+     *     </changeSet>
+     * </databaseChangeLog>
+     *     </code>
+     * </pre>
+     */
     public void generateInsertXmlConfigDoc() {
         for (Table table : dataModel.getTableList()) {
 

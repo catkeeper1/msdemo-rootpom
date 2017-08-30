@@ -6,7 +6,7 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 
 /**
- * Created by Administrator on 2017/7/2.
+ * Template for Liquibase file generation.
  */
 public abstract class FileWritterTemplate {
 
@@ -18,6 +18,9 @@ public abstract class FileWritterTemplate {
 
     protected abstract void doWrite(OutputStreamWriter writer) throws IOException;
 
+    /**
+     * Template steps for Liquibase file generation.
+     */
     public void execute() {
 
         FileWriter docWriter = null;
