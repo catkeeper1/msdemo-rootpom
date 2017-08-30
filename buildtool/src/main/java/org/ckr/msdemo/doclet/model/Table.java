@@ -91,7 +91,7 @@ public class Table {
     }
 
     /**
-     * Create Table according to classDoc
+     * Create Table according to classDoc.
      *
      * @param classDoc classDoc
      * @return Table
