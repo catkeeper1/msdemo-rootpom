@@ -138,6 +138,12 @@ public class Column {
 
     }
 
+    /**
+     * Create document for all columns.
+     *
+     * @param classDoc classDoc
+     * @return List of Column
+     */
     public static List<Column> createColumns(ClassDoc classDoc) {
 
         List<Column> result = new ArrayList();
@@ -168,7 +174,7 @@ public class Column {
                     data.setScale((Integer) annotationValue.value()))
                 .parent()
                 .annotation(COLUMN_ID_QUALIFIED_NAME, (data, annotationValue) -> data.setIsPrimaryKey(true)).parent()
-                .scaneProgramElement();
+                .scanProgramElement();
 
 
             if (column.getName() == null) {
@@ -192,6 +198,12 @@ public class Column {
         return result;
     }
 
+    /**
+     * Create document for all Join Table Column.
+     *
+     * @param indexAnnotation indexAnnotation
+     * @return null
+     */
     public static Column createJoinTableColumn(AnnotationValue indexAnnotation) {
 
         Column result = new Column();
@@ -229,15 +241,15 @@ public class Column {
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) {
+    public boolean equals(Object object) {
+        if (this == object) {
             return true;
         }
-        if (o == null || getClass() != o.getClass()) {
+        if (object == null || getClass() != object.getClass()) {
             return false;
         }
 
-        Column column = (Column) o;
+        Column column = (Column) object;
 
         if (name != null ? !name.equals(column.name) : column.name != null) {
             return false;

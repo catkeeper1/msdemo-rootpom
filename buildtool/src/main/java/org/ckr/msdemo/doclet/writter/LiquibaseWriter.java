@@ -20,13 +20,13 @@ import java.util.Date;
 /**
  * Created by Administrator on 2017/6/20.
  */
-public class LiquibaseWritter {
+public class LiquibaseWriter {
 
     private File baseDir;
 
     private DataModel dataModel;
 
-    public LiquibaseWritter(String baseDirPath, DataModel dataModel) {
+    public LiquibaseWriter(String baseDirPath, DataModel dataModel) {
         createBaseDir(baseDirPath);
         this.dataModel = dataModel;
     }
@@ -69,12 +69,42 @@ public class LiquibaseWritter {
         return result;
     }
 
+    /**
+     * Generate Ddl statement of Liquibase for tables.
+     * <pre>
+     *     <code>
+     * <?xml version="1.0" encoding="UTF-8"?>
+     * <databaseChangeLog
+     *         xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+     *         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+     *         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+     *          http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+     *     <changeSet author="liquibase-docs" id="createTable-org.ckr.msdemo.adminservice.entity.MENU">
+     *
+     *         <createTable tableName="MENU">
+     *             <column name="CODE" type="java.sql.Types.VARCHAR(100)">
+     *                 <constraints nullable="false"/>
+     *             </column>
+     *             <column name="PARENT_CODE" type="java.sql.Types.VARCHAR(100)"/>
+     *             <column name="DESCRIPTION" type="java.sql.Types.VARCHAR(200)"/>
+     *             <column name="FUNCTION_POINT" type="java.sql.Types.VARCHAR(100)"/>
+     *             <column name="MODULE" type="java.sql.Types.VARCHAR(100)"/>
+     *         </createTable>
+     *     </changeSet>
+     *     <changeSet author="liquibase-docs" id="createTablePk-org.ckr.msdemo.adminservice.entity.MENU">
+     *
+     *         <addPrimaryKey constraintName="PK_MENU" columnNames="CODE" tableName="MENU" />
+     *     </changeSet>
+     * </databaseChangeLog>
+     *     </code>
+     * </pre>
+     */
     public void generateDdlXmlConfigDoc() {
         for (Table table : dataModel.getTableList()) {
 
             File docFile = createDocFile(table, "db.changelog.create_" + table.getTableName() + ".xml");
 
-            final LiquibaseWritter t = this;
+            final LiquibaseWriter t = this;
 
             new FileWritterTemplate(docFile) {
 
@@ -213,13 +243,33 @@ public class LiquibaseWritter {
         return "";
     }
 
-
+    /**
+     * Generate insert statement of Liquibase for tables.
+     * <pre>
+     *     <code>
+     * <?xml version="1.0" encoding="UTF-8"?>
+     * <databaseChangeLog
+     *         xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+     *         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+     *         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+     *          http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+     *     <changeSet author="liquibase-docs" id="insertTable-org.ckr.msdemo.adminservice.entity.MENU" context="!UT">
+     *
+     *         <loadUpdateData file="org/ckr/msdemo/adminservice/entity/MENU.csv"
+     *                         primaryKey="CODE"
+     *                         tableName="MENU">
+     *         </loadUpdateData>
+     *     </changeSet>
+     * </databaseChangeLog>
+     *     </code>
+     * </pre>
+     */
     public void generateInsertXmlConfigDoc() {
         for (Table table : dataModel.getTableList()) {
 
             File docFile = createDocFile(table, "db.changelog.insert_" + table.getTableName() + ".xml");
 
-            final LiquibaseWritter t = this;
+            final LiquibaseWriter t = this;
 
             new FileWritterTemplate(docFile) {
 
@@ -259,10 +309,10 @@ public class LiquibaseWritter {
         }
 
         writeChangeSet(writter,
-                "insertTable-"
-                        + table.getPackageName()
-                        + "." + table.getTableName()
-                        , "!UT" );
+            "insertTable-"
+                + table.getPackageName()
+                + "." + table.getTableName(),
+            "!UT");
 
 
         writter.write(ENTER);
@@ -320,12 +370,16 @@ public class LiquibaseWritter {
     }
 
 
+    /**
+     * Generate insert statement of Liquibase for tables
+     * <pre><include file="org/ckr/msdemo/adminservice/entity/db.changelog.create_USER.xml"/></pre>
+     */
     public void generateInsertCsvTemplate() {
         for (Table table : dataModel.getTableList()) {
 
             File docFile = createDocFile(table, table.getTableName() + ".csv");
 
-            final LiquibaseWritter t = this;
+            final LiquibaseWriter t = this;
 
             new FileWritterTemplate(docFile) {
 
@@ -354,12 +408,16 @@ public class LiquibaseWritter {
 
     }
 
+    /**
+     * Generate include statement of Liquibase for tables
+     * <pre><include file="org/ckr/msdemo/adminservice/entity/db.changelog.create_USER.xml"/></pre>
+     */
     public void generateIncludeXmlConfig() {
         for (Table table : dataModel.getTableList()) {
 
             File docFile = createDocFile(table, "db.changelog." + table.getTableName() + ".xml");
 
-            final LiquibaseWritter t = this;
+            final LiquibaseWriter t = this;
 
             new FileWritterTemplate(docFile) {
 

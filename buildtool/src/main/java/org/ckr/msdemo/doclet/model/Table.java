@@ -90,7 +90,12 @@ public class Table {
 
     }
 
-
+    /**
+     * Create Table according to classDoc.
+     *
+     * @param classDoc classDoc
+     * @return Table
+     */
     public static Table createEntity(ClassDoc classDoc) {
 
 
@@ -102,7 +107,7 @@ public class Table {
             .attribute(TABLE_INDEXS, (data, annotationValue) ->
                 createIndexList(data, (AnnotationValue[]) annotationValue.value()))
             .parent()
-            .scaneProgramElement();
+            .scanProgramElement();
 
 
         if (instance.tableName == null) {
@@ -221,15 +226,15 @@ public class Table {
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) {
+    public boolean equals(Object object) {
+        if (this == object) {
             return true;
         }
-        if (o == null || getClass() != o.getClass()) {
+        if (object == null || getClass() != object.getClass()) {
             return false;
         }
 
-        Table table = (Table) o;
+        Table table = (Table) object;
 
         if (tableName != null ? !tableName.equals(table.tableName) : table.tableName != null) {
             return false;

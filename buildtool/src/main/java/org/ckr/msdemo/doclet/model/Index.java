@@ -103,15 +103,15 @@ public class Index {
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) {
+    public boolean equals(Object object) {
+        if (this == object) {
             return true;
         }
-        if (o == null || getClass() != o.getClass()) {
+        if (object == null || getClass() != object.getClass()) {
             return false;
         }
 
-        Index index = (Index) o;
+        Index index = (Index) object;
 
         if (name != null ? !name.equals(index.name) : index.name != null) {
             return false;
