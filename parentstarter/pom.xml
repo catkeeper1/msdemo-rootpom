@@ -214,10 +214,11 @@
                         <configuration>
                             <skip>${msdemo.skipReportGen}</skip>
                             <target>
+
                                 <copy todir="${project.basedir}/target/allClasses"
                                       preservelastmodified="true" verbose="true">
                                     <fileset dir="${project.basedir}">
-                                        <include name="/*/target/classes/**/*"/>
+                                        <include name="*/target/classes/**/*"/>
                                     </fileset>
                                 </copy>
 
