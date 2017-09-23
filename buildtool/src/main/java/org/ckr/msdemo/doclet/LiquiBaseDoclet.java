@@ -4,19 +4,25 @@ import com.sun.javadoc.LanguageVersion;
 import com.sun.javadoc.RootDoc;
 import org.ckr.msdemo.doclet.model.DataModel;
 import org.ckr.msdemo.doclet.util.DocletUtil;
-import org.ckr.msdemo.doclet.writter.LiquibaseWritter;
+import org.ckr.msdemo.doclet.writter.LiquibaseWriter;
 
 /**
- * Created by Administrator on 2017/6/1.
+ * Doclet to generate Liquibase config file.
  */
 public class LiquiBaseDoclet {
 
+    /**
+     * Entry to start generate Liquibase config file.
+     *
+     * @param root RootDoc
+     * @return true
+     */
     public static boolean start(RootDoc root) {
 
 
         DataModel dataModel = new DataModel(root.classes());
 
-        LiquibaseWritter writter = new LiquibaseWritter(DocletUtil.getOutputDirPath(), dataModel);
+        LiquibaseWriter writter = new LiquibaseWriter(DocletUtil.getOutputDirPath(), dataModel);
 
         writter.generateDdlXmlConfigDoc();
         writter.generateInsertXmlConfigDoc();
@@ -26,6 +32,11 @@ public class LiquiBaseDoclet {
         return true;
     }
 
+    /**
+     * Specify the JAVA version.
+     *
+     * @return LanguageVersion
+     */
     public static LanguageVersion languageVersion() {
         return LanguageVersion.JAVA_1_5;
     }

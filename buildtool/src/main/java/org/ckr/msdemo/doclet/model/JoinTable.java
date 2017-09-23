@@ -99,7 +99,7 @@ public class JoinTable {
             .annotation(Table.TABLE_QUALIFIED_NAME)
             .attribute(Table.TABLE_NAME, (data, annotationValue) -> data.add((String) annotationValue.value()))
             .parent()
-            .scaneProgramElement();
+            .scanProgramElement();
 
         if (includeTableName.isEmpty()) {
             return result;
@@ -123,7 +123,7 @@ public class JoinTable {
                     (data, annotationValue) ->
                         createInverseColumnList(data, (AnnotationValue[]) annotationValue.value()))
                 .parent()
-                .scaneProgramElement();
+                .scanProgramElement();
 
             if (instance.getTableName() == null) {
                 continue;
@@ -157,7 +157,7 @@ public class JoinTable {
         return result;
     }
 
-    static private String getParameterTypeName(Type type) {
+    private static String getParameterTypeName(Type type) {
 
         if (type == null) {
             return null;
@@ -173,7 +173,7 @@ public class JoinTable {
 
     }
 
-    static private void createJoinColumnList(JoinTable dataObject, AnnotationValue[] columnAnnotationList) {
+    private static void createJoinColumnList(JoinTable dataObject, AnnotationValue[] columnAnnotationList) {
 
         if (columnAnnotationList == null) {
             return;
@@ -189,7 +189,7 @@ public class JoinTable {
 
     }
 
-    static private void createInverseColumnList(JoinTable dataObject, AnnotationValue[] columnAnnotationList) {
+    private static void createInverseColumnList(JoinTable dataObject, AnnotationValue[] columnAnnotationList) {
 
         if (columnAnnotationList == null) {
             return;
