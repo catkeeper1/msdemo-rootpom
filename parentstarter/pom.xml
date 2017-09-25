@@ -365,9 +365,11 @@
                     <sourceFiles>
                         <directory>${basedir}</directory>
                         <includes>
-                            <include>src/main/java/org/ckr/msdemo/**/*.adoc</include>
+                            <include>src/main/java/org/ckr/msdemo/**/*.puml</include>
                         </includes>
                     </sourceFiles>
+                    <outputInSourceDirectory>true</outputInSourceDirectory>
+                    <format>svg</format>
                 </configuration>
                 <dependencies>
                     <dependency>
