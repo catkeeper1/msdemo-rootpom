@@ -157,7 +157,7 @@
     <module name="VariableDeclarationUsageDistance"/>
     <module name="CustomImportOrder">
       <!-- change specal import to the package of current project-->
-      <property name="specialImportsRegExp" value="com.ckr.otms"/>
+      <property name="specialImportsRegExp" value="org.ckr.msdemo"/>
       <property name="sortImportsInGroupAlphabetically" value="true"/>
       <property name="customImportOrderRules" value="STATIC###SPECIAL_IMPORTS###THIRD_PARTY_PACKAGE###STANDARD_JAVA_PACKAGE"/>
     </module>
@@ -204,5 +204,10 @@
       <property name="exceptionVariableName" value="expected"/>
     </module>
     <module name="CommentsIndentation"/>
+    <!--add below module to check program complexity. They are used to make sure the programs
+     are design properly so that they are not too complicated for maintenance.-->
+    <module name="CyclomaticComplexity">
+      <property name="max" value="10"/>
+    </module>
   </module>
 </module>
