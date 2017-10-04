@@ -500,7 +500,19 @@
                         </tagletArtifact>
                     </tagletArtifacts>
                 </configuration>
+                <reportSets>
+                    <!-- generate javadoc for production code only -->
+                    <reportSet>
+                        <id>aggregate</id>
+                        <configuration>
+                            <!-- Specific configuration for the aggregate report -->
 
+                        </configuration>
+                        <reports>
+                            <report>aggregate</report>
+                        </reports>
+                    </reportSet>
+                </reportSets>
             </plugin>
 
             <plugin>
