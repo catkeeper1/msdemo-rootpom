@@ -163,6 +163,19 @@
             </plugin>
 
             <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-source-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>attach-sources</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
                 <groupId>org.liquibase</groupId>
                 <artifactId>liquibase-maven-plugin</artifactId>
                 <version>3.5.3</version>
@@ -308,7 +321,7 @@
 
                         <configuration>
                             <doclet>org.ckr.msdemo.doclet.LiquiBaseDoclet</doclet>
-                            <!--<docletPath>"D:/IdeaProjects/msdemo/msdemo-rootpom/buildtool/target/classes"</docletPath>-->
+
                             <docletArtifacts>
                                 <artifact>
                                     <artifactId>build-tool</artifactId>
@@ -322,6 +335,10 @@
                             <docencoding>UTF-8</docencoding>
                             <encoding>UTF-8</encoding>
                             <charset>UTF-8</charset>
+                            <!--<includeDependencySources>true</includeDependencySources>-->
+                            <!--<dependencySourceIncludes>-->
+                                <!--<dependencySourceInclude>org.ckr.msdemo:exceptions</dependencySourceInclude>-->
+                            <!--</dependencySourceIncludes>-->
                             <additionalJOptions>
                                 <additionalJOption>-J-Doutput=${project.build.directory}</additionalJOption>
                             </additionalJOptions>
