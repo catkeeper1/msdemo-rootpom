@@ -529,7 +529,7 @@
                         <configuration>
                             <!-- Specific configuration for the aggregate report -->
                             <includeDependencySources>true</includeDependencySources>
-                            <includeTransitiveDependencySources>true</includeTransitiveDependencySources>
+                            <includeTransitiveDependencySources>false</includeTransitiveDependencySources>
                             <dependencySourceIncludes>
                                 <dependencySourceInclude>org.ckr.msdemo:db-access</dependencySourceInclude>
                             </dependencySourceIncludes>
