@@ -352,10 +352,8 @@ public class LiquibaseWriter {
 
         if (Date.class.isAssignableFrom(javaFileType)) {
             columnType = "DATE";
-        } else if (Long.class.isAssignableFrom(javaFileType)) {
-            columnType = "BIGINT";
         } else if (Number.class.isAssignableFrom(javaFileType)) {
-            columnType = "CURRENCY";
+            columnType = "NUMERIC";
         } else if (Boolean.class.isAssignableFrom(javaFileType)) {
             columnType = "BOOLEAN";
         }

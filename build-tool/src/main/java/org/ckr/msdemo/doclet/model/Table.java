@@ -9,6 +9,7 @@ import org.ckr.msdemo.doclet.util.DocletUtil;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Created by Administrator on 2017/6/7.
@@ -30,6 +31,8 @@ public class Table {
     private List<Index> indexList = new ArrayList<>();
 
     private List<Column> columnList = new ArrayList<>();
+
+    private List<ForeignKey> foreignKeyList = new ArrayList<>();
 
     private String comment;
 
@@ -86,6 +89,14 @@ public class Table {
         this.columnList = columnList;
     }
 
+    public List<ForeignKey> getForeignKeyList() {
+        return foreignKeyList;
+    }
+
+    private void setForeignKeyList(List<ForeignKey> foreignKeyList) {
+        this.foreignKeyList = foreignKeyList;
+    }
+
     private Table() {
 
     }
@@ -123,6 +134,10 @@ public class Table {
         instance.setColumnList(columnList);
 
         instance.setComment(classDoc.commentText());
+
+        List<ForeignKey> foreignKeyList = ForeignKey.createForeignKeys(classDoc);
+
+        instance.setForeignKeyList(foreignKeyList);
 
         logMsg("create entity object for classDoc: " + classDoc);
         logMsg("table: " + instance);
@@ -215,49 +230,34 @@ public class Table {
 
     @Override
     public String toString() {
-        return "Table{"
-            + "tableName='" + tableName + '\''
-            + ", packageName='" + packageName + '\''
-            + ", className='" + className + '\''
-            + ", indexList=" + indexList
-            + ", columnList=" + columnList
-            + ", comment=" + comment
-            + '}';
+        final StringBuilder sb = new StringBuilder("Table{");
+        sb.append("tableName='").append(tableName).append('\'');
+        sb.append(", packageName='").append(packageName).append('\'');
+        sb.append(", className='").append(className).append('\'');
+        sb.append(", indexList=").append(indexList);
+        sb.append(", columnList=").append(columnList);
+        sb.append(", foreignKeyList=").append(foreignKeyList);
+        sb.append(", comment='").append(comment).append('\'');
+        sb.append('}');
+        return sb.toString();
     }
 
     @Override
-    public boolean equals(Object object) {
-        if (this == object) {
-            return true;
-        }
-        if (object == null || getClass() != object.getClass()) {
-            return false;
-        }
-
-        Table table = (Table) object;
-
-        if (tableName != null ? !tableName.equals(table.tableName) : table.tableName != null) {
-            return false;
-        }
-        if (packageName != null ? !packageName.equals(table.packageName) : table.packageName != null) {
-            return false;
-        }
-        if (indexList != null ? !indexList.equals(table.indexList) : table.indexList != null) {
-            return false;
-        }
-        if (columnList != null ? !columnList.equals(table.columnList) : table.columnList != null) {
-            return false;
-        }
-        return comment != null ? comment.equals(table.comment) : table.comment == null;
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Table table = (Table) o;
+        return Objects.equals(tableName, table.tableName) &&
+                Objects.equals(packageName, table.packageName) &&
+                Objects.equals(className, table.className) &&
+                Objects.equals(indexList, table.indexList) &&
+                Objects.equals(columnList, table.columnList) &&
+                Objects.equals(foreignKeyList, table.foreignKeyList) &&
+                Objects.equals(comment, table.comment);
     }
 
     @Override
     public int hashCode() {
-        int result = tableName != null ? tableName.hashCode() : 0;
-        result = 31 * result + (packageName != null ? packageName.hashCode() : 0);
-        result = 31 * result + (indexList != null ? indexList.hashCode() : 0);
-        result = 31 * result + (columnList != null ? columnList.hashCode() : 0);
-        result = 31 * result + (comment != null ? comment.hashCode() : 0);
-        return result;
+        return Objects.hash(tableName, packageName, className, indexList, columnList, foreignKeyList, comment);
     }
 }

@@ -261,6 +261,12 @@ public class DocletUtil {
             result = "java.sql.Types.DATE";
         } else if (Timestamp.class.getName().equals(column.getJavaFieldType())) {
             result = "java.sql.Types.TIMESTAMP";
+        } else if (Long.class.getName().equals(column.getJavaFieldType())) {
+            result = "java.sql.Types.BIGINT";
+        } else if (Integer.class.getName().equals(column.getJavaFieldType())) {
+            result = "java.sql.Types.INTEGER";
+        } else if (Short.class.getName().equals(column.getJavaFieldType())) {
+            result = "java.sql.Types.SMALLINT";
         } else if (BigDecimal.class.getName().equals(column.getJavaFieldType())) {
             scale = 19;
             precision = 4;

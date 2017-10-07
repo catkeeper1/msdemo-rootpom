@@ -129,6 +129,11 @@
             <version>3.8.0</version>
             <scope>test</scope>
         </dependency>
+
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+        </dependency>
     </dependencies>
     <build>
         <plugins>
@@ -160,6 +165,19 @@
                 </configuration>
 
 
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-source-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>attach-sources</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
 
             <plugin>
@@ -308,7 +326,7 @@
 
                         <configuration>
                             <doclet>org.ckr.msdemo.doclet.LiquiBaseDoclet</doclet>
-                            <!--<docletPath>"D:/IdeaProjects/msdemo/msdemo-rootpom/buildtool/target/classes"</docletPath>-->
+
                             <docletArtifacts>
                                 <artifact>
                                     <artifactId>build-tool</artifactId>
@@ -322,6 +340,10 @@
                             <docencoding>UTF-8</docencoding>
                             <encoding>UTF-8</encoding>
                             <charset>UTF-8</charset>
+                            <!--<includeDependencySources>true</includeDependencySources>-->
+                            <!--<dependencySourceIncludes>-->
+                                <!--<dependencySourceInclude>org.ckr.msdemo:exceptions</dependencySourceInclude>-->
+                            <!--</dependencySourceIncludes>-->
                             <additionalJOptions>
                                 <additionalJOption>-J-Doutput=${project.build.directory}</additionalJOption>
                             </additionalJOptions>
@@ -500,7 +522,23 @@
                         </tagletArtifact>
                     </tagletArtifacts>
                 </configuration>
-
+                <reportSets>
+                    <!-- generate javadoc for production code only -->
+                    <reportSet>
+                        <id>aggregate</id>
+                        <configuration>
+                            <!-- Specific configuration for the aggregate report -->
+                            <includeDependencySources>true</includeDependencySources>
+                            <includeTransitiveDependencySources>false</includeTransitiveDependencySources>
+                            <dependencySourceIncludes>
+                                <dependencySourceInclude>org.ckr.msdemo:db-access</dependencySourceInclude>
+                            </dependencySourceIncludes>
+                        </configuration>
+                        <reports>
+                            <report>aggregate</report>
+                        </reports>
+                    </reportSet>
+                </reportSets>
             </plugin>
 
             <plugin>
