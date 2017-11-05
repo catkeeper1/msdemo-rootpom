@@ -9,6 +9,7 @@ import org.ckr.msdemo.doclet.util.DocletUtil;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 /**
@@ -135,9 +136,9 @@ public class Table {
 
         instance.setComment(classDoc.commentText());
 
-        List<ForeignKey> foreignKeyList = ForeignKey.createForeignKeys(classDoc);
-
-        instance.setForeignKeyList(foreignKeyList);
+//        List<ForeignKey> foreignKeyList = ForeignKey.createForeignKeys(classDoc);
+//
+//        instance.setForeignKeyList(foreignKeyList);
 
         logMsg("create entity object for classDoc: " + classDoc);
         logMsg("table: " + instance);
@@ -227,6 +228,14 @@ public class Table {
         return result;
     }
 
+    public void setForeignKeyInfo(Map<String, List<ForeignKey>> foreignKeyMap) {
+        List<ForeignKey> fkList = foreignKeyMap.get(this.tableName);
+
+        if(fkList == null) {
+            return;
+        }
+        this.setForeignKeyList(fkList);
+    }
 
     @Override
     public String toString() {

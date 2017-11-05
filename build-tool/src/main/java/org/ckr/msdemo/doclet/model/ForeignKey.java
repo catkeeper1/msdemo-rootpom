@@ -3,9 +3,12 @@ package org.ckr.msdemo.doclet.model;
 import com.sun.javadoc.ClassDoc;
 import com.sun.javadoc.MethodDoc;
 import org.ckr.msdemo.doclet.util.AnnotationScanTemplate;
+import org.ckr.msdemo.doclet.util.DocletUtil;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by Administrator on 2017/10/6.
@@ -28,6 +31,8 @@ public class ForeignKey {
 
     public static final String JOIN_COLUMN_NAME = "name";
 
+    public static final String RELATIONSHIP_OPTIONAL = "optional";
+
     public static final String JOIN_COLUMNS_NAME = "joinColumns";
 
     public static final String JOIN_TYPE_ONE_TO_ONE = "ONE_TO_ONE";
@@ -47,6 +52,8 @@ public class ForeignKey {
     private List<String> sourceColumnNames = new ArrayList<>();
 
     private List<String> targetColumnNames = new ArrayList<>();
+
+    private Boolean optional = true;
 
     public String getSourceTableName() {
         return sourceTableName;
@@ -88,6 +95,14 @@ public class ForeignKey {
         this.joinType = joinType;
     }
 
+    public Boolean getOptional() {
+        return optional;
+    }
+
+    private void setOptional(Boolean optional) {
+        this.optional = optional;
+    }
+
     private void addColumnName(String columnName) {
 
         if(JOIN_TYPE_MANY_TO_ONE.equals(this.joinType)) {
@@ -106,9 +121,27 @@ public class ForeignKey {
     private ForeignKey() {
     }
 
-    public static List<ForeignKey> createForeignKeys(ClassDoc classDoc) {
+    public static Map<String, List<ForeignKey>> createForeignKeys(ClassDoc classDoc, List<Table> tableList) {
 
-        List<ForeignKey> result = new ArrayList();
+        Map<String, List<ForeignKey>> result = new HashMap<>();
+
+        StringBuilder tableNameBuilder = new StringBuilder();
+
+        new AnnotationScanTemplate<StringBuilder>(classDoc, tableNameBuilder)
+                .annotation(Table.TABLE_QUALIFIED_NAME)
+                    .attribute(Table.TABLE_NAME, (data, annotationValue) -> tableNameBuilder.append((String) annotationValue.value()))
+                .parent()
+                .scanProgramElement();
+
+        String tableName = tableNameBuilder.toString();
+
+        if("".equals(tableName)) {
+            return result;
+        }
+
+        List<ForeignKey> foreignKeyList = new ArrayList<>();
+
+        result.put(tableName, foreignKeyList);
 
         MethodDoc[] methods = classDoc.methods();
 
@@ -122,17 +155,16 @@ public class ForeignKey {
 
 
             new AnnotationScanTemplate<ForeignKey>(method, foreignKey)
-                    .annotation(MANY_TO_MANY_QUALIFIED_NAME,
-                            (dataObject, annotation) -> dataObject.setJoinType(JOIN_TYPE_MANY_TO_MANY))
-                    .parent()
+
                     .annotation(MANY_TO_ONE_QUALIFIED_NAME,
                             (dataObject, annotation) -> dataObject.setJoinType(JOIN_TYPE_MANY_TO_ONE))
-                    .parent()
-                    .annotation(ONE_TO_MANY_QUALIFIED_NAME,
-                            (dataObject, annotation) -> dataObject.setJoinType(JOIN_TYPE_ONE_TO_MANY))
+                        .attribute(RELATIONSHIP_OPTIONAL,
+                               (data, annotationValue) -> data.setOptional((Boolean)annotationValue.value()))
                     .parent()
                     .annotation(ONE_TO_ONE_QUALIFIED_NAME,
                             (dataObject, annotation) -> dataObject.setJoinType(JOIN_TYPE_ONE_TO_ONE))
+                        .attribute(RELATIONSHIP_OPTIONAL,
+                                (data, annotationValue) -> data.setOptional((Boolean)annotationValue.value()))
                     .parent()
                     .annotation(JOIN_COLUMN_QUALIFIED_NAME)
                         .attribute(JOIN_COLUMN_NAME,
@@ -145,30 +177,48 @@ public class ForeignKey {
                                     data.addColumnName((String) annotationValue.value()))
                     .parent()
                     .scanProgramElement();
-//                    .attribute(JOIN_TABLE_NAME,
-//                               (data, annotationValue) -> data.setJoinTableName((String) annotationValue.value()))
-//                    .attribute(JOIN_COLUMNS_NAME,
-//                            (data, annotationValue) -> data.setNullable((Boolean) annotationValue.value()))
-//                    .attribute(COLUMN_DEFINITION,
-//                            (data, annotationValue) -> data.setColumnDefinition((String) annotationValue.value()))
-//                    .attribute(COLUMN_LENGTH,
-//                            (data, annotationValue) -> data.setLength((Integer) annotationValue.value()))
-//                    .attribute(COLUMN_PRECISION, (data, annotationValue) ->
-//                            data.setPrecision((Integer) annotationValue.value()))
-//                    .attribute(COLUMN_SCALE, (data, annotationValue) ->
-//                            data.setScale((Integer) annotationValue.value()))
-//                    .parent()
-//                    .annotation(COLUMN_ID_QUALIFIED_NAME, (data, annotationValue) -> data.setIsPrimaryKey(true)).parent()
-//                    .scanProgramElement();
 
 
             if (foreignKey.joinType == null) {
                 continue;
             }
 
+            foreignKey.setSourceTableName(tableName);
 
-            result.add(foreignKey);
+            String targetTableTypeName = method.returnType().qualifiedTypeName();
+            DocletUtil.logMsg("targetTableTypeName: " + targetTableTypeName);
+
+            Table targetTable = null;
+            for(Table table : tableList) {
+                if(targetTableTypeName.equals(table.getFullClassName())) {
+                    targetTable = table;
+                }
+            }
+
+            foreignKey.setTargetTableName(targetTable.getTableName());
+
+            //find the ID column for target table.
+            if(foreignKey.getTargetColumnNames().isEmpty()) {
+
+                List<String> targetColumnNames = new ArrayList<>();
+
+                for(Column targetColumn : targetTable.getColumnList()) {
+                    if(targetColumn.getIsPrimaryKey()) {
+                        targetColumnNames.add(targetColumn.getName());
+                    }
+
+                }
+
+                foreignKey.setTargetColumnNames(targetColumnNames);
+            }
+
+            DocletUtil.logMsg("create foreign Key: " + foreignKey);
+            foreignKeyList.add(foreignKey);
+
+
+            //result.add(foreignKey);
         }
+
 
 //        if (result.size() > 0 && classDoc.superclass() != null) {
 //
@@ -186,6 +236,7 @@ public class ForeignKey {
         sb.append("joinType='").append(joinType).append('\'');
         sb.append(", sourceTableName='").append(sourceTableName).append('\'');
         sb.append(", targetTableName='").append(targetTableName).append('\'');
+        sb.append(", optional='").append(optional).append('\'');
         sb.append(", sourceColumnNames=").append(sourceColumnNames);
         sb.append(", targetColumnNames=").append(targetColumnNames);
         sb.append('}');
