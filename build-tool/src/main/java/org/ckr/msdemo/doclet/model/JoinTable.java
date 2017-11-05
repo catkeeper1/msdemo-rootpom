@@ -11,6 +11,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import static org.ckr.msdemo.doclet.util.DocletUtil.getParameterTypeName;
+
 /**
  * Created by Administrator on 2017/7/2.
  */
@@ -157,21 +159,7 @@ public class JoinTable {
         return result;
     }
 
-    private static String getParameterTypeName(Type type) {
 
-        if (type == null) {
-            return null;
-        }
-
-        Type[] typeParams = type.asParameterizedType().typeArguments();
-
-        if (typeParams == null || typeParams.length == 0) {
-            return null;
-        }
-
-        return typeParams[0].asClassDoc().qualifiedName();
-
-    }
 
     private static void createJoinColumnList(JoinTable dataObject, AnnotationValue[] columnAnnotationList) {
 

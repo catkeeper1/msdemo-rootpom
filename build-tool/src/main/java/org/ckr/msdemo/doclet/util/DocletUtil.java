@@ -5,6 +5,7 @@ import com.sun.javadoc.AnnotationValue;
 import com.sun.javadoc.ClassDoc;
 import com.sun.javadoc.MethodDoc;
 import com.sun.javadoc.ProgramElementDoc;
+import com.sun.javadoc.Type;
 import org.ckr.msdemo.doclet.model.Column;
 
 import java.io.File;
@@ -296,6 +297,34 @@ public class DocletUtil {
         }
 
         return result;
+    }
+
+    public static String getParameterTypeName(Type type) {
+
+        ClassDoc classDoc = getParameterTypeClassDoc(type);
+
+        if(classDoc == null) {
+            return null;
+        }
+
+        return classDoc.qualifiedName();
+
+    }
+
+    public static ClassDoc getParameterTypeClassDoc(Type type) {
+
+        if (type == null) {
+            return null;
+        }
+
+        Type[] typeParams = type.asParameterizedType().typeArguments();
+
+        if (typeParams == null || typeParams.length == 0) {
+            return null;
+        }
+
+        return typeParams[0].asClassDoc();
+
     }
 
 }

@@ -19,6 +19,8 @@ public class Column {
 
     public static final String COLUMN_ID_QUALIFIED_NAME = "javax.persistence.Id";
 
+    public static final String EMBEDDED_ID_QUALIFIED_NAME = "javax.persistence.EmbeddedId";
+
     public static final String COLUMN_NAME = "name";
 
     public static final String JOIN_TABLE_COLUMN_NAME = "name";
@@ -139,6 +141,96 @@ public class Column {
     }
 
     /**
+     * Create columns for @EmbeddedId scenario.
+     * @param method a java method java doc object.
+     * @return  a list of Columns if the method has @EmbeddedId annotation.
+     */
+    private static List<Column> createEmbeddedIdColumns(MethodDoc method) {
+
+        List<Column> result = new ArrayList<>();
+
+        new AnnotationScanTemplate<List<Column>>(method, result)
+            .annotation(EMBEDDED_ID_QUALIFIED_NAME, (resultList, annotationValue)
+                    -> createEmbeddedColumn(method, resultList, true))
+            .parent()
+            .scanProgramElement();
+
+
+        return result;
+
+    }
+
+    private static List<Column> createEmbeddedColumn(MethodDoc methodDoc, List<Column> resultList, boolean isPk) {
+        ClassDoc embeddedClass = null;
+
+        //assume the @EmbeddedId is placed at get method.
+        if (methodDoc.name().startsWith("get")) {
+            embeddedClass = methodDoc.returnType().asClassDoc();
+
+            DocletUtil.logMsg("The embedded class is " + embeddedClass.qualifiedName());
+        } else {
+            DocletUtil.logMsg("Cannot find embedded class.");
+            return resultList;
+        }
+
+        MethodDoc[] methods = embeddedClass.methods();
+
+        if (methods == null) {
+            return resultList;
+        }
+
+        for (MethodDoc method : methods) {
+
+            Column column = createNormalColumn(method);
+
+            if(column != null) {
+                column.setIsPrimaryKey(isPk);
+                resultList.add(column);
+                continue;
+            }
+
+
+        }
+
+        return resultList;
+    }
+
+    private static Column createNormalColumn(MethodDoc method) {
+        Column column = new Column();
+
+
+        new AnnotationScanTemplate<Column>(method, column)
+                .annotation(COLUMN_QUALIFIED_NAME)
+                .attribute(COLUMN_NAME, (data, annotationValue) -> data.setName((String) annotationValue.value()))
+                .attribute(COLUMN_NULLABLE,
+                        (data, annotationValue) -> data.setNullable((Boolean) annotationValue.value()))
+                .attribute(COLUMN_DEFINITION,
+                        (data, annotationValue) -> data.setColumnDefinition((String) annotationValue.value()))
+                .attribute(COLUMN_LENGTH,
+                        (data, annotationValue) -> data.setLength((Integer) annotationValue.value()))
+                .attribute(COLUMN_PRECISION, (data, annotationValue) ->
+                        data.setPrecision((Integer) annotationValue.value()))
+                .attribute(COLUMN_SCALE, (data, annotationValue) ->
+                        data.setScale((Integer) annotationValue.value()))
+                .parent()
+                .annotation(COLUMN_ID_QUALIFIED_NAME, (data, annotationValue) -> data.setIsPrimaryKey(true))
+                .parent()
+                .scanProgramElement();
+
+
+        if (column.getName() == null) {
+            return null;
+        }
+
+        column.setJavaFieldName(DocletUtil.getMethodName(method));
+        column.setJavaFieldType(DocletUtil.getFieldTypeName(method));
+
+        column.setComment(method.commentText());
+
+        return column;
+    }
+
+    /**
      * Create document for all columns.
      *
      * @param classDoc classDoc
@@ -156,36 +248,16 @@ public class Column {
 
         for (MethodDoc method : methods) {
 
-            Column column = new Column();
+            Column column = createNormalColumn(method);
 
-
-            new AnnotationScanTemplate<Column>(method, column)
-                .annotation(COLUMN_QUALIFIED_NAME)
-                .attribute(COLUMN_NAME, (data, annotationValue) -> data.setName((String) annotationValue.value()))
-                .attribute(COLUMN_NULLABLE,
-                    (data, annotationValue) -> data.setNullable((Boolean) annotationValue.value()))
-                .attribute(COLUMN_DEFINITION,
-                    (data, annotationValue) -> data.setColumnDefinition((String) annotationValue.value()))
-                .attribute(COLUMN_LENGTH,
-                    (data, annotationValue) -> data.setLength((Integer) annotationValue.value()))
-                .attribute(COLUMN_PRECISION, (data, annotationValue) ->
-                    data.setPrecision((Integer) annotationValue.value()))
-                .attribute(COLUMN_SCALE, (data, annotationValue) ->
-                    data.setScale((Integer) annotationValue.value()))
-                .parent()
-                .annotation(COLUMN_ID_QUALIFIED_NAME, (data, annotationValue) -> data.setIsPrimaryKey(true)).parent()
-                .scanProgramElement();
-
-
-            if (column.getName() == null) {
+            if(column != null) {
+                result.add(column);
                 continue;
             }
 
-            column.setJavaFieldName(DocletUtil.getMethodName(method));
-            column.setJavaFieldType(DocletUtil.getFieldTypeName(method));
+            List<Column> embeddedColumns = createEmbeddedIdColumns(method);
 
-            column.setComment(method.commentText());
-            result.add(column);
+            result.addAll(embeddedColumns);
         }
 
         if (result.size() > 0 && classDoc.superclass() != null) {

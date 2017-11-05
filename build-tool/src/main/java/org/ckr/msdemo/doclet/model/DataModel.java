@@ -39,32 +39,32 @@ public class DataModel {
             return;
         }
 
-        Map<String, JoinTable> joinTableMap = new LinkedHashMap<>();
-
-        List<Table> convertedJoinTableList = new ArrayList<>();
-
-        for (int i = 0; i < classeDocs.length; i++) {
-
-            List<JoinTable> joinTableList = JoinTable.createJoinTable(classeDocs[i], tableList);
-            if (joinTableList.isEmpty()) {
-                continue;
-            }
-
-            for (JoinTable joinTable : joinTableList) {
-                if (joinTableMap.containsKey(joinTable.getTableName())) {
-                    continue;
-                }
-
-                DocletUtil.logMsg("created join table:" + joinTable.toString());
-
-                joinTableMap.put(joinTable.getTableName(), joinTable);
-
-                convertedJoinTableList.add(Table.convertFromJoinTable(joinTable, tableList));
-            }
-
-        }
-
-        tableList.addAll(convertedJoinTableList);
+//        Map<String, JoinTable> joinTableMap = new LinkedHashMap<>();
+//
+//        List<Table> convertedJoinTableList = new ArrayList<>();
+//
+//        for (int i = 0; i < classeDocs.length; i++) {
+//
+//            List<JoinTable> joinTableList = JoinTable.createJoinTable(classeDocs[i], tableList);
+//            if (joinTableList.isEmpty()) {
+//                continue;
+//            }
+//
+//            for (JoinTable joinTable : joinTableList) {
+//                if (joinTableMap.containsKey(joinTable.getTableName())) {
+//                    continue;
+//                }
+//
+//                DocletUtil.logMsg("created join table:" + joinTable.toString());
+//
+//                joinTableMap.put(joinTable.getTableName(), joinTable);
+//
+//                convertedJoinTableList.add(Table.convertFromJoinTable(joinTable, tableList));
+//            }
+//
+//        }
+//
+//        tableList.addAll(convertedJoinTableList);
 
 
         //tableList.addAll(joinTableMap.values());

@@ -14,9 +14,19 @@ public class ForeignKey {
 
     public static final String MANY_TO_MANY_QUALIFIED_NAME = "javax.persistence.ManyToMany";
 
+    public static final String MANY_TO_ONE_QUALIFIED_NAME = "javax.persistence.ManyToOne";
+
+    public static final String ONE_TO_MANY_QUALIFIED_NAME = "javax.persistence.OneToMany";
+
+    public static final String ONE_TO_ONE_QUALIFIED_NAME = "javax.persistence.OneToOne";
+
     public static final String JOIN_TABLE_QUALIFIED_NAME = "javax.persistence.JoinTable";
 
+    public static final String JOIN_COLUMN_QUALIFIED_NAME = "javax.persistence.JoinColumn";
+
     public static final String JOIN_TABLE_NAME = "name";
+
+    public static final String JOIN_COLUMN_NAME = "name";
 
     public static final String JOIN_COLUMNS_NAME = "joinColumns";
 
@@ -30,34 +40,44 @@ public class ForeignKey {
 
     private String joinType;
 
-    private String joinTableName;
+    private String sourceTableName = "";
 
-    private String joinColumnNames;
+    private String targetTableName = "";
 
-    private String inverseJoinColumnNames;
+    private List<String> sourceColumnNames = new ArrayList<>();
 
-    private void setJoinTableName(String joinTableName) {
-        this.joinTableName = joinTableName;
+    private List<String> targetColumnNames = new ArrayList<>();
+
+    public String getSourceTableName() {
+        return sourceTableName;
     }
 
-    public String getJoinTableName() {
-        return joinTableName;
+    private void setSourceTableName(String sourceTableName) {
+        this.sourceTableName = sourceTableName;
     }
 
-    public String getJoinColumnNames() {
-        return joinColumnNames;
+    public String getTargetTableName() {
+        return targetTableName;
     }
 
-    private void setJoinColumnNames(String joinColumnNames) {
-        this.joinColumnNames = joinColumnNames;
+    private void setTargetTableName(String targetTableName) {
+        this.targetTableName = targetTableName;
     }
 
-    public String getInverseJoinColumnNames() {
-        return inverseJoinColumnNames;
+    public List<String> getSourceColumnNames() {
+        return sourceColumnNames;
     }
 
-    private void setInverseJoinColumnNames(String inverseJoinColumnNames) {
-        this.inverseJoinColumnNames = inverseJoinColumnNames;
+    private void setSourceColumnNames(List<String> sourceColumnNames) {
+        this.sourceColumnNames = sourceColumnNames;
+    }
+
+    public List<String> getTargetColumnNames() {
+        return targetColumnNames;
+    }
+
+    private void setTargetColumnNames(List<String> targetColumnNames) {
+        this.targetColumnNames = targetColumnNames;
     }
 
     public String getJoinType() {
@@ -66,6 +86,21 @@ public class ForeignKey {
 
     private void setJoinType(String joinType) {
         this.joinType = joinType;
+    }
+
+    private void addColumnName(String columnName) {
+
+        if(JOIN_TYPE_MANY_TO_ONE.equals(this.joinType)) {
+            this.sourceColumnNames.add(columnName);
+        }
+
+        if(JOIN_TYPE_ONE_TO_MANY.equals(this.joinType) ||
+           JOIN_TYPE_ONE_TO_ONE.equals(this.joinType)) {
+
+            this.targetColumnNames.add(columnName);
+        }
+
+
     }
 
     private ForeignKey() {
@@ -90,7 +125,24 @@ public class ForeignKey {
                     .annotation(MANY_TO_MANY_QUALIFIED_NAME,
                             (dataObject, annotation) -> dataObject.setJoinType(JOIN_TYPE_MANY_TO_MANY))
                     .parent()
+                    .annotation(MANY_TO_ONE_QUALIFIED_NAME,
+                            (dataObject, annotation) -> dataObject.setJoinType(JOIN_TYPE_MANY_TO_ONE))
+                    .parent()
+                    .annotation(ONE_TO_MANY_QUALIFIED_NAME,
+                            (dataObject, annotation) -> dataObject.setJoinType(JOIN_TYPE_ONE_TO_MANY))
+                    .parent()
+                    .annotation(ONE_TO_ONE_QUALIFIED_NAME,
+                            (dataObject, annotation) -> dataObject.setJoinType(JOIN_TYPE_ONE_TO_ONE))
+                    .parent()
+                    .annotation(JOIN_COLUMN_QUALIFIED_NAME)
+                        .attribute(JOIN_COLUMN_NAME,
+                                (data, annotationValue) ->
+                                        data.addColumnName((String) annotationValue.value()))
+                    .parent()
                     .annotation(JOIN_TABLE_QUALIFIED_NAME)
+                        .attribute(JOIN_TABLE_NAME,
+                            (data, annotationValue) ->
+                                    data.addColumnName((String) annotationValue.value()))
                     .parent()
                     .scanProgramElement();
 //                    .attribute(JOIN_TABLE_NAME,
@@ -132,9 +184,10 @@ public class ForeignKey {
     public String toString() {
         final StringBuilder sb = new StringBuilder("ForeignKey{");
         sb.append("joinType='").append(joinType).append('\'');
-        sb.append(", joinTableName='").append(joinTableName).append('\'');
-        sb.append(", joinColumnNames='").append(joinColumnNames).append('\'');
-        sb.append(", inverseJoinColumnNames='").append(inverseJoinColumnNames).append('\'');
+        sb.append(", sourceTableName='").append(sourceTableName).append('\'');
+        sb.append(", targetTableName='").append(targetTableName).append('\'');
+        sb.append(", sourceColumnNames=").append(sourceColumnNames);
+        sb.append(", targetColumnNames=").append(targetColumnNames);
         sb.append('}');
         return sb.toString();
     }
