@@ -238,6 +238,16 @@ public class DocletUtil {
         return result.toString();
     }
 
+    public static String getColumnTypeForErDiagram(Column column) {
+        String result = getColumnType(column);
+
+        if(result.startsWith("java.sql.Types.")) {
+            result = result.substring("java.sql.Types.".length());
+        }
+
+        return result;
+    }
+
     /**
      * Get fully qualified name of the Column type.
      *

@@ -105,12 +105,12 @@ public class ForeignKey {
 
     private void addColumnName(String columnName) {
 
-        if(JOIN_TYPE_MANY_TO_ONE.equals(this.joinType)) {
+        if(JOIN_TYPE_MANY_TO_ONE.equals(this.joinType) ||
+           JOIN_TYPE_ONE_TO_ONE.equals(this.joinType)) {
             this.sourceColumnNames.add(columnName);
         }
 
-        if(JOIN_TYPE_ONE_TO_MANY.equals(this.joinType) ||
-           JOIN_TYPE_ONE_TO_ONE.equals(this.joinType)) {
+        if(JOIN_TYPE_ONE_TO_MANY.equals(this.joinType)) {
 
             this.targetColumnNames.add(columnName);
         }

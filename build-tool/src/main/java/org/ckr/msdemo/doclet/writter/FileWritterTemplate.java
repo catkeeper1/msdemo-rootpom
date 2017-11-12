@@ -1,5 +1,7 @@
 package org.ckr.msdemo.doclet.writter;
 
+import org.ckr.msdemo.doclet.util.DocletUtil;
+
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -27,13 +29,16 @@ public abstract class FileWritterTemplate {
 
         try {
             docWriter = new FileWriter(file);
+            DocletUtil.logMsg("open file for writing: " + file.getAbsolutePath());
             this.doWrite(docWriter);
             docWriter.flush();
+            DocletUtil.logMsg("flush file: " + file.getAbsolutePath());
         } catch (IOException ioExp) {
             throw new RuntimeException(ioExp);
         } finally {
             if (docWriter != null) {
                 try {
+                    DocletUtil.logMsg("close writter.");
                     docWriter.close();
                 } catch (IOException ioException) {
                     throw new RuntimeException(ioException);

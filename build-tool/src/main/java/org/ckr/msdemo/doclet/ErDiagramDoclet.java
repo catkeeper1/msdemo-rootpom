@@ -4,30 +4,22 @@ import com.sun.javadoc.LanguageVersion;
 import com.sun.javadoc.RootDoc;
 import org.ckr.msdemo.doclet.model.DataModel;
 import org.ckr.msdemo.doclet.util.DocletUtil;
+import org.ckr.msdemo.doclet.writter.ErDiagramWriter;
 import org.ckr.msdemo.doclet.writter.LiquibaseWriter;
 
 /**
- * Doclet to generate Liquibase config file.
+ * Created by Administrator on 2017/11/11.
  */
-public class LiquiBaseDoclet {
+public class ErDiagramDoclet {
 
-    /**
-     * Entry to start generate Liquibase config file.
-     *
-     * @param root RootDoc
-     * @return true
-     */
     public static boolean start(RootDoc root) {
 
 
         DataModel dataModel = new DataModel(root.classes());
 
-        LiquibaseWriter writter = new LiquibaseWriter(DocletUtil.getOutputDirPath(), dataModel);
+        ErDiagramWriter writter = new ErDiagramWriter(DocletUtil.getOutputDirPath(), dataModel.getTableList());
 
-        writter.generateDdlXmlConfigDoc();
-        writter.generateInsertXmlConfigDoc();
-        writter.generateInsertCsvTemplate();
-        writter.generateIncludeXmlConfig();
+        writter.generateErDiagram();
 
         return true;
     }
@@ -36,10 +28,10 @@ public class LiquiBaseDoclet {
      * Specify the JAVA version.
      * If 1.5 is not specified here, some annotation will no be parsed by javadoc so that the Doclet
      * also cannot read those annotation info.
-     *
      * @return LanguageVersion
      */
     public static LanguageVersion languageVersion() {
         return LanguageVersion.JAVA_1_5;
     }
+
 }

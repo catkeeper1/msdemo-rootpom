@@ -159,7 +159,8 @@
       <!-- change specal import to the package of current project-->
       <property name="specialImportsRegExp" value="org.ckr.msdemo"/>
       <property name="sortImportsInGroupAlphabetically" value="true"/>
-      <property name="customImportOrderRules" value="STATIC###SPECIAL_IMPORTS###THIRD_PARTY_PACKAGE###STANDARD_JAVA_PACKAGE"/>
+      <!--change the default import order so that it match the default auto import order in IDEA-->
+      <property name="customImportOrderRules" value="THIRD_PARTY_PACKAGE###STANDARD_JAVA_PACKAGE###STATIC"/>
     </module>
     <module name="MethodParamPad"/>
     <module name="OperatorWrap">
