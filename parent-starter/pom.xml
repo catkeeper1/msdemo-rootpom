@@ -241,7 +241,7 @@
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>findbugs-maven-plugin</artifactId>
-                <version>3.0.5</version>
+                <version>3.0.4</version>
                 <dependencies>
                     <dependency>
                         <groupId>io.springfox</groupId>
@@ -281,6 +281,11 @@
                     <dependency>
                         <groupId>org.ckr.msdemo</groupId>
                         <artifactId>build-tool</artifactId>
+                        <version>${project.version}</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>org.ckr.msdemo</groupId>
+                        <artifactId>exceptions</artifactId>
                         <version>${project.version}</version>
                     </dependency>
 
