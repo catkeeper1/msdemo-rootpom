@@ -137,7 +137,6 @@ public class SVGFileConverter {
         }
 
 
-
         return result;
 
     }
@@ -188,6 +187,13 @@ public class SVGFileConverter {
                         (dest.getAbsolutePath().length() - (destinationType.getExtension().length())) );
 
                 newFilePath = newFilePath + orgSuffix;
+
+                //if the file is already exist, cannot rename. so that need to delete it first.
+                File existingFile = new File(newFilePath);
+                if(existingFile.exists()) {
+                    existingFile.delete();
+
+                }
 
                 dest.renameTo(new File(newFilePath));
             }

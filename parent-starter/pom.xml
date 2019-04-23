@@ -287,15 +287,19 @@
                     <execution>
                         <id>clean-pics-in-src-folder</id>
                         <phase>clean</phase>
+                        <inherited>true</inherited>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
                         <configuration>
-                        <target>
-                            <delete>
-                                <fileset dir="${project.build.sourceDirectory}" >
-                                    <include name="**/*.svg" />
-                                    <include name="**/*.png" />
-                                </fileset>
-                            </delete>
-                        </target>
+                            <target>
+                                <delete>
+                                    <fileset dir="${project.build.sourceDirectory}" >
+                                        <include name="**/*.svg" />
+                                        <include name="**/*.png" />
+                                    </fileset>
+                                </delete>
+                            </target>
                         </configuration>
                     </execution>
                 </executions>
@@ -567,10 +571,10 @@
                             <skip>${msdemo.skipPdfDoc}</skip>
 
                             <doclet>com.tarsec.javadoc.pdfdoclet.PDFDoclet</doclet>
-
+                            <overview>pdf_overview.html</overview>
                             <docletPath>${basedir}/../msdemo-rootpom/build-tool/ext_jar/pdfdoclet-1.0.3-all.jar</docletPath>
                             <useStandardDocletOptions>false</useStandardDocletOptions>
-                            <additionalparam>-pdf ${basedir}/target/java_doc.pdf -config ${basedir}/javadoc_config.properties</additionalparam>
+                            <additionalparam>-pdf ${basedir}/target/java_doc.pdf -config ${basedir}/javadoc_config.properties -workdir ${basedir}</additionalparam>
                             <show>protected</show>
                             <docencoding>UTF-8</docencoding>
                             <encoding>UTF-8</encoding>
