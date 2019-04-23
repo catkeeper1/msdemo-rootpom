@@ -143,9 +143,15 @@ public class SVGFileConverter {
     }
 
     public static void main(String[] args) {
+
+        if(args.length != 2) {
+            throw new RuntimeException("Need to provide 2 parameters for this main method." +
+                                       "The first one is the source folder. The second one is the destination folder");
+        }
+
         getInstance()
-                .setDestinationFolder("D:\\WS\\MS_DEMO_WS\\msdemo-commonlibs\\target\\generated-resources\\converted_pic")
-                .setSourceFolder("D:\\WS\\MS_DEMO_WS\\msdemo-commonlibs\\target\\site\\apidocs")
+                .setDestinationFolder(args[1])
+                .setSourceFolder(args[0])
                 .setDestinationType(DestinationType.PNG)
                 .setDoNotChangeSuffix(false)
                 .execute();
@@ -166,7 +172,7 @@ public class SVGFileConverter {
 
         @Override
         public void onSourceTranscodingSuccess(SVGConverterSource source, File dest) {
-
+            super.onSourceTranscodingSuccess(source, dest);
             if(this.doNotChangeSuffix) {
                 return;
             }
@@ -187,7 +193,7 @@ public class SVGFileConverter {
             }
 
 
-            super.onSourceTranscodingSuccess(source, dest);
+
         }
     }
 }

@@ -18,6 +18,8 @@
         <maven.compiler.encoding>UTF-8</maven.compiler.encoding>
         <msdemo.skipReportGen>true</msdemo.skipReportGen>
         <msdemo.skipGenLiquibaseXml>true</msdemo.skipGenLiquibaseXml>
+        <msdemo.skipPdfDoc>true</msdemo.skipPdfDoc>
+
         <springboot.version>1.5.6.RELEASE</springboot.version>
 
         <spring.cloud.netflix.version>1.3.4.RELEASE</spring.cloud.netflix.version>
@@ -33,12 +35,15 @@
             </properties>
         </profile>
 
+
+
     </profiles>
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
         <version>1.5.6.RELEASE</version>
     </parent>
+
 
     <dependencyManagement>
         <dependencies>
@@ -104,6 +109,8 @@
                 <artifactId>guava</artifactId>
                 <version>27.0.1-jre</version>
             </dependency>
+
+
         </dependencies>
     </dependencyManagement>
     <dependencies>
@@ -141,7 +148,43 @@
         </dependency>
     </dependencies>
     <build>
+
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>exec-maven-plugin</artifactId>
+                    <version>${exec-maven-plugin.version}</version>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+
+
         <plugins>
+
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>build-helper-maven-plugin</artifactId>
+                <version>3.0.0</version>
+                <executions>
+                    <!-- This folder is used to let the findbugs report can be linked to the source file properly.
+                         For PDF version javadoc generation, this folder will be used as well.
+                     -->
+                    <execution>
+                        <id>add-source</id>
+                        <phase>pre-site</phase>
+                        <goals>
+                            <goal>add-source</goal>
+                        </goals>
+                        <configuration>
+                            <sources>
+                                <source>target/allSources</source>
+                            </sources>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
@@ -207,7 +250,7 @@
                     </dependency>
                     <dependency>
                         <groupId>org.ckr.msdemo</groupId>
-                        <artifactId>build-tool</artifactId>
+                        <artifactId>build-resource</artifactId>
                         <version>${project.version}</version>
                     </dependency>
                 </dependencies>
@@ -221,7 +264,7 @@
 
                     <dependency>
                         <groupId>org.ckr.msdemo</groupId>
-                        <artifactId>build-tool</artifactId>
+                        <artifactId>build-resource</artifactId>
                         <version>${project.version}</version>
                     </dependency>
                 </dependencies>
@@ -238,6 +281,24 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-antrun-plugin</artifactId>
                 <version>1.8</version>
+
+                <executions>
+
+                    <execution>
+                        <id>clean-pics-in-src-folder</id>
+                        <phase>clean</phase>
+                        <configuration>
+                        <target>
+                            <delete>
+                                <fileset dir="${project.build.sourceDirectory}" >
+                                    <include name="**/*.svg" />
+                                    <include name="**/*.png" />
+                                </fileset>
+                            </delete>
+                        </target>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
 
 
@@ -246,7 +307,7 @@
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>findbugs-maven-plugin</artifactId>
-                <version>3.0.4</version>
+                <version>3.0.5</version>
                 <dependencies>
                     <dependency>
                         <groupId>io.springfox</groupId>
@@ -285,7 +346,7 @@
                     </dependency>
                     <dependency>
                         <groupId>org.ckr.msdemo</groupId>
-                        <artifactId>build-tool</artifactId>
+                        <artifactId>build-resource</artifactId>
                         <version>${project.version}</version>
                     </dependency>
                     <dependency>
@@ -423,6 +484,103 @@
                         <version>3.0.2</version>
                     </dependency>
                 </dependencies>
+            </plugin>
+
+            <!-- use to generate the UML SVG file for each modules so that the SVG can be converted to PNG later.
+             The PNG files will be used to generate javadoc in PDF format-->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>2.10.4</version>
+
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>javadoc</goal>
+                        </goals>
+                        <phase>pre-site</phase>
+
+                        <configuration>
+                            <skip>${msdemo.skipPdfDoc}</skip>
+                            <show>protected</show>
+                            <docencoding>UTF-8</docencoding>
+                            <encoding>UTF-8</encoding>
+                            <charset>UTF-8</charset>
+                            <taglet>org.jdrupes.taglets.plantUml.Taglet</taglet>
+                            <tagletArtifacts>
+                                <tagletArtifact>
+                                    <groupId>org.jdrupes.taglets</groupId>
+                                    <artifactId>plantuml-taglet</artifactId>
+                                    <version>1.0.4</version>
+                                </tagletArtifact>
+                            </tagletArtifacts>
+                        </configuration>
+                    </execution>
+                </executions>
+
+            </plugin>
+
+            <!-- converted the SVG file in javadoc to PNG files so that those picture can be shown in javadoc in PDF
+            format. -->
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+
+                <executions>
+
+                    <execution>
+                        <id>convert-svg-files</id>
+                        <goals>
+                            <goal>java</goal>
+                        </goals>
+                        <phase>site</phase>
+                        <inherited>true</inherited>
+                        <configuration>
+                            <skip>${msdemo.skipPdfDoc}</skip>
+                            <mainClass>org.ckr.msdemo.util.SVGFileConverter</mainClass>
+                            <includePluginDependencies>true</includePluginDependencies>
+                            <arguments>
+                                <argument>${basedir}/target/site/apidocs</argument>
+                                <argument>${basedir}/src/main/java</argument>
+                            </arguments>
+                            <cleanupDaemonThreads>false</cleanupDaemonThreads>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!-- generate javadoc in PDF format -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>2.10.4</version>
+
+                <executions>
+                    <execution>
+                        <id>generate-pdf-javadoc</id>
+                        <goals>
+                            <goal>aggregate</goal>
+                        </goals>
+                        <phase>post-site</phase>
+
+                        <configuration>
+                            <skip>${msdemo.skipPdfDoc}</skip>
+
+                            <doclet>com.tarsec.javadoc.pdfdoclet.PDFDoclet</doclet>
+
+                            <docletPath>${basedir}/../msdemo-rootpom/build-tool/ext_jar/pdfdoclet-1.0.3-all.jar</docletPath>
+                            <useStandardDocletOptions>false</useStandardDocletOptions>
+                            <additionalparam>-pdf ${basedir}/target/java_doc.pdf -config ${basedir}/javadoc_config.properties</additionalparam>
+                            <show>protected</show>
+                            <docencoding>UTF-8</docencoding>
+                            <encoding>UTF-8</encoding>
+                            <charset>UTF-8</charset>
+
+                        </configuration>
+                    </execution>
+                </executions>
+
+
             </plugin>
 
         </plugins>
