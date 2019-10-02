@@ -260,7 +260,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-pmd-plugin</artifactId>
-                <version>3.8</version>
+                <version>3.12.0</version>
                 <dependencies>
 
                     <dependency>
@@ -730,9 +730,11 @@
                     <skip>${msdemo.skipReportGen}</skip>
                     <skipEmptyReport>false</skipEmptyReport>
                     <aggregate>true</aggregate>
+                    <targetJdk>1.8</targetJdk>
                     <rulesets>
                         <ruleset>org/ckr/msdemo/pmd/pmd.xml</ruleset>
                     </rulesets>
+                    <printFailingErrors>true</printFailingErrors>
                 </configuration>
 
             </plugin>
