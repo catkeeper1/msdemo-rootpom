@@ -25,6 +25,8 @@
         <spring.cloud.netflix.version>1.3.4.RELEASE</spring.cloud.netflix.version>
         <swagger.version>2.9.2</swagger.version>
         <jmockit.version>1.33</jmockit.version>
+        <mockito.version>3.1.0</mockito.version>
+        <powermock.version>2.0.2</powermock.version>
         <exec-maven-plugin.version>1.6.0</exec-maven-plugin.version>
     </properties>
     <profiles>
@@ -130,6 +132,25 @@
         </dependency>
 
         <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-core</artifactId>
+            <version>${mockito.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.powermock</groupId>
+            <artifactId>powermock-module-junit4</artifactId>
+            <version>${powermock.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.powermock</groupId>
+            <artifactId>powermock-api-mockito2</artifactId>
+            <version>${powermock.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <scope>test</scope>
@@ -201,12 +222,13 @@
                 <artifactId>maven-surefire-plugin</artifactId>
 
                 <configuration>
-
+                    <argLine>${surefireArgLine}</argLine>
                     <systemPropertyVariables>
-                        <coverage-output>serial</coverage-output>
-                        <coverage-outputDir>${project.basedir}/target/coverage-data/</coverage-outputDir>
-                        <coverage-metrics>line</coverage-metrics>
-                        <coverage-srcDirs>${project.basedir}/src/main/java</coverage-srcDirs>
+                        <!--<coverage-output>serial</coverage-output>-->
+                        <!--<coverage-outputDir>${project.basedir}/target/coverage-data/</coverage-outputDir>-->
+                        <!--<coverage-metrics>line</coverage-metrics>-->
+                        <!--<coverage-srcDirs>${project.basedir}/src/main/java</coverage-srcDirs>-->
+
                         <!--<coverage-classes>loaded</coverage-classes>-->
                         <!--<coverage-check>80</coverage-check>-->
                     </systemPropertyVariables>
@@ -586,6 +608,38 @@
                 </executions>
 
 
+            </plugin>
+
+            <plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+                <version>0.8.4</version>
+                <configuration>
+                    <output>file</output>
+                    <append>true</append>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>pre-unit-test</id>
+                        <phase>process-test-classes</phase>
+                        <goals>
+                            <goal>prepare-agent</goal>
+                        </goals>
+                        <configuration>
+                            <propertyName>surefireArgLine</propertyName>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>post-unit-test</id>
+                        <phase>test</phase>
+                        <goals>
+                            <goal>report</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${project.reporting.outputDirectory}/jacoco-ut</outputDirectory>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
 
         </plugins>
